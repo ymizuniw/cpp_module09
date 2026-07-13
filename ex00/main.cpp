@@ -43,6 +43,19 @@ std::vector<std::string> split_line(std::string &line, const char delim)
     return (tokens);
 }
 
+void print_tokens(std::vector<std::vector<std::string>> &nodes)
+{
+    std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
+
+    while (row_it!=row_end)
+    {
+        std::cout << (*row_it)[0] << std::endl;
+        std::cout << (*row_it)[1] << std::endl;
+        ++row_it;
+    }
+}
+
 /*
     1. check tokens in a node is split into two tokens
 */
@@ -53,27 +66,44 @@ void check_split_tokens(std::vector<std::vector<std::string>> &nodes)
 
     while (row_it!=row_end)
     {
-        std::cout << (*row_it)[0] << std::endl;
-        std::cout << (*row_it)[1] << std::endl;
         if (row_it->size()!=2)
             throw std::runtime_error("Invalid line format");
         ++row_it;
     }
 }
 
-std::vector<std::vector<std::string>> parser(std::ifstream &db_file_stream, std::ifstream &input_file_stream)
+std::vector<std::vector<std::string>> parser(std::ifstream &file_stream, const char delim)
 {
     // parse DB file
     std::vector<std::vector<std::string>> nodes;
     std::string line;
 
-    while (std::getline(db_file_stream, line))
+    while (std::getline(file_stream, line))
     {
-        std::vector<std::string> tokens = split_line(line, ',');
+        std::vector<std::string> tokens = split_line(line, delim);
         nodes.push_back(tokens);
     }
     check_split_tokens(nodes);
-    return nodes;
+    return (nodes);
+}
+
+void trim_spaces_from_input(std::vector<std::vector<std::string>> &nodes)
+{
+    std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
+
+    while (row_it!=row_end)
+    {
+        if ((*row_it)[0].empty() || (*row_it)[1].empty())
+            throw std::runtime_error("Invalid line format");
+        size_t len = (*row_it)[0].length();
+        // date' '|' 'value
+        if ((*row_it)[0][len-1]!=' ' || (*row_it)[1][0]!=' ')
+          throw std::runtime_error("Invalid line format");
+        (*row_it)[0].erase(len-1, 1);
+        (*row_it)[1].erase(0,1);
+        ++row_it;
+    }
 }
 
 int main(int argc, char *argv[])
@@ -92,15 +122,21 @@ int main(int argc, char *argv[])
         check_fstream_open(input_file_stream);
         check_csv_file(db_file_stream,"date,exchange_rate");
         check_csv_file(input_file_stream,"date | value");
+
+        std::vector<std::vector<std::string>> db_nodes = parser(db_file_stream, ',');
+        std::vector<std::vector<std::string>> input_nodes = parser(input_file_stream, '|');
+        
+        trim_spaces_from_input(input_nodes);
+        // print_tokens(input_nodes);
+
+
     } catch(std::exception &e){
         std::cout << e.what() << std::endl;
         return (1);
     }
 
-    std::vector<std::vector<std::string>> nodes = parser(db_file_stream, input_file_stream);
-    
     // run parser
-    
+
     // select date and return the exchange rate
 
     // calculate the index value
