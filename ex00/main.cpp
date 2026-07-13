@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <sstream>
 
-bool check_csv_file(std::ifstream &file_stream, std::string format)
+void check_csv_file(std::ifstream &file_stream, std::string format)
 {
     // check the first line of csv
     std::string line;
@@ -12,21 +12,16 @@ bool check_csv_file(std::ifstream &file_stream, std::string format)
     {
         if (line!=format)
         {
-            std::cerr << "invalid format of CSV." << std::endl;
-            return (false);
+            throw std::runtime_error("invalid format of CSV.");
         }
     }
-    else
-        return (false);
-    return (true);
 }
 
-bool check_fstream_open(std::ifstream &file_stream)
+void check_fstream_open(std::ifstream &file_stream)
 {
     if (!file_stream.is_open()){
-        return(false);
+        throw std::runtime_error("file could not be opened");
     }
-    return (true);
 }
 
 // https://dexall.co.jp/articles/?p=2187#i-4
@@ -38,9 +33,9 @@ std::vector<std::string> split_line(std::string &line, const char delim)
     std::string token;
     std::istringstream iss(line);
 
+    iss.exceptions(std::ios_base::badbit);
     while (std::getline(iss, token, delim))
     {
-        // std::cout << token << std::endl;
         if (!token.empty()){
             tokens.push_back(token);
         }
@@ -51,18 +46,19 @@ std::vector<std::string> split_line(std::string &line, const char delim)
 /*
     1. check tokens in a node is split into two tokens
 */
-bool check_split_tokens(const std::vector<std::vector<std::string>> &nodes)
+void check_split_tokens(std::vector<std::vector<std::string>> &nodes)
 {
-    std::vector<std::vector<std::string>>::const_iterator row_it = nodes.begin();
-    std::vector<std::vector<std::string>>::const_iterator row_end = nodes.end();
+    std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
 
     while (row_it!=row_end)
     {
+        std::cout << (*row_it)[0] << std::endl;
+        std::cout << (*row_it)[1] << std::endl;
         if (row_it->size()!=2)
-            return (false);
+            throw std::runtime_error("Invalid line format");
         ++row_it;
     }
-    return (true);
 }
 
 std::vector<std::vector<std::string>> parser(std::ifstream &db_file_stream, std::ifstream &input_file_stream)
@@ -71,19 +67,13 @@ std::vector<std::vector<std::string>> parser(std::ifstream &db_file_stream, std:
     std::vector<std::vector<std::string>> nodes;
     std::string line;
 
-    while (std::getline(db_file_stream, line))//\n?
+    while (std::getline(db_file_stream, line))
     {
         std::vector<std::string> tokens = split_line(line, ',');
         nodes.push_back(tokens);
     }
-    // check the std::basic_ios status
-    if (db_file_stream.bad())
-    {
-        throw 
-    }
-    if (!check_split_tokens(nodes))
-        return(false);
-    return (true);
+    check_split_tokens(nodes);
+    return nodes;
 }
 
 int main(int argc, char *argv[])
@@ -94,31 +84,22 @@ int main(int argc, char *argv[])
     std::ifstream db_file_stream("data.csv", std::ios_base::in);
     std::ifstream input_file_stream(argv[1], std::ios_base::in);
     
-    db_file_stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
-    input_file_stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+    db_file_stream.exceptions(std::ios_base::badbit);
+    input_file_stream.exceptions(std::ios_base::badbit);
+
     try {
         check_fstream_open(db_file_stream);
         check_fstream_open(input_file_stream);
-
-        if (!check_csv_file(db_file_stream,"date,exchange_rate"))
-            return (1);
-        if (!check_csv_file(input_file_stream,"date | value"))
-            return (1);  
-    } catch(...){
-
+        check_csv_file(db_file_stream,"date,exchange_rate");
+        check_csv_file(input_file_stream,"date | value");
+    } catch(std::exception &e){
+        std::cout << e.what() << std::endl;
+        return (1);
     }
 
-    // if (!check_fstream_open(db_file_stream))
-    //     return (1);
-    // if (!check_fstream_open(input_file_stream))
-    //     return (1);
-
-    // if (!check_csv_file(db_file_stream,"date,exchange_rate"))
-    //     return (1);
-    // if (!check_csv_file(input_file_stream,"date | value"))
-    //     return (1);
+    std::vector<std::vector<std::string>> nodes = parser(db_file_stream, input_file_stream);
     
-    // run parser 
+    // run parser
     
     // select date and return the exchange rate
 
