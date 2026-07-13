@@ -2,88 +2,129 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
+#include <sstream>
 
-typedef struct s_err_stat {
-    int no_separator;
-    int wrong_date;
-    int wrong_value;
-
-    int date_cannot_parse;
-    int value_cannot_parse;
-} t_err_stat;
-
-int main(int argc, char **argv)
+bool check_csv_file(std::ifstream &file_stream, std::string format)
 {
-    if (argc!=2)
-        return (1);
-    std::ifstream input(argv[1]);
-    if (input.fail())
-        std::cout << "file could not be opned" << std::endl;
+    // check the first line of csv
     std::string line;
-    std::getline(input, line);
-    std::getline(input, line);
-    std::cout << line << std::endl;
-    //4digits,-,2digits,-,2digits,space,|,space,1
+    if (std::getline(file_stream, line))
+    {
+        if (line!=format)
+        {
+            std::cerr << "invalid format of CSV." << std::endl;
+            return (false);
+        }
+    }
+    else
+        return (false);
+    return (true);
+}
 
-    /*
-        all the format errors
-        1.no separator '|'
-        2.wrong date -> further branches
-        3.wrong value -> further branches
-    */
-    t_err_stat estat={0};
-    std::string::iterator date_start = line.begin();
-    std::string::iterator separator = std::find(line.begin(), line.end(),'|');
+bool check_fstream_open(std::ifstream &file_stream)
+{
+    if (!file_stream.is_open()){
+        return(false);
+    }
+    return (true);
+}
+
+// https://dexall.co.jp/articles/?p=2187#i-4
+// in case of ",", it works. 
+// in case of " | ", split by '|' and trimming spaces in the first and second substring.
+std::vector<std::string> split_line(std::string &line, const char delim)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream iss(line);
+
+    while (std::getline(iss, token, delim))
+    {
+        // std::cout << token << std::endl;
+        if (!token.empty()){
+            tokens.push_back(token);
+        }
+    }
+    return (tokens);
+}
+
+/*
+    1. check tokens in a node is split into two tokens
+*/
+bool check_split_tokens(const std::vector<std::vector<std::string>> &nodes)
+{
+    std::vector<std::vector<std::string>>::const_iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string>>::const_iterator row_end = nodes.end();
+
+    while (row_it!=row_end)
+    {
+        if (row_it->size()!=2)
+            return (false);
+        ++row_it;
+    }
+    return (true);
+}
+
+std::vector<std::vector<std::string>> parser(std::ifstream &db_file_stream, std::ifstream &input_file_stream)
+{
+    // parse DB file
+    std::vector<std::vector<std::string>> nodes;
+    std::string line;
+
+    while (std::getline(db_file_stream, line))//\n?
+    {
+        std::vector<std::string> tokens = split_line(line, ',');
+        nodes.push_back(tokens);
+    }
+    // check the std::basic_ios status
+    if (db_file_stream.bad())
+    {
+        throw 
+    }
+    if (!check_split_tokens(nodes))
+        return(false);
+    return (true);
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2)
+        return (1);
+
+    std::ifstream db_file_stream("data.csv", std::ios_base::in);
+    std::ifstream input_file_stream(argv[1], std::ios_base::in);
     
-    if (separator==line.begin())
-    {
-        estat.date_cannot_parse = 1;
-    }
-    if (separator==line.end())
-    {
-        estat.no_separator = 1;
-        estat.value_cannot_parse = 1;
-    }
-    else if (separator+1==line.end())
-    {
-        estat.value_cannot_parse = 1;
-    }
+    db_file_stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+    input_file_stream.exceptions(std::ios_base::badbit | std::ios_base::failbit);
+    try {
+        check_fstream_open(db_file_stream);
+        check_fstream_open(input_file_stream);
 
-    if (estat.no_separator)
-    {
-        std::cout << "Error: no_separator" << std::endl;
-        return (1);
-    }
-    else if (estat.date_cannot_parse)
-    {
-        std::cout << "Error: date does not exist" << std::endl;
-        return (1);
-    }
-    else if (estat.value_cannot_parse)
-    {
-        std::cout << "Error: value does not exist" << std::endl;
-        return (1);
+        if (!check_csv_file(db_file_stream,"date,exchange_rate"))
+            return (1);
+        if (!check_csv_file(input_file_stream,"date | value"))
+            return (1);  
+    } catch(...){
+
     }
 
-    std::string::iterator date_end = separator - 1;
-    std::string::iterator value_start = separator + 1;
-    std::string::iterator value_end = line.end() - 1;
+    // if (!check_fstream_open(db_file_stream))
+    //     return (1);
+    // if (!check_fstream_open(input_file_stream))
+    //     return (1);
 
-    std::cout << std::string(date_start, date_end) << std::endl;
-    std::cout << std::string(separator, separator+1) << std::endl;
-    std::cout << std::string(value_start, value_end+1) << std::endl;
+    // if (!check_csv_file(db_file_stream,"date,exchange_rate"))
+    //     return (1);
+    // if (!check_csv_file(input_file_stream,"date | value"))
+    //     return (1);
+    
+    // run parser 
+    
+    // select date and return the exchange rate
 
+    // calculate the index value
 
-    /*
-        There are two options:
-        1. firstly, separate by "|" for each date and value
-        2. firstly, read and analyze input line from head to end.
+    // print the index value
 
-    */
-
-    /*
-        In case separate by "|", start/end iterators of each date and value should be kept.
-    */
-
-    return (0);
+    return(0);
 }
