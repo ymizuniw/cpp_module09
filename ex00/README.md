@@ -20,6 +20,7 @@ ex)
 3. ファイルを1行読み取り、"date,exchange_rate"を検証
 4. ファイルの存在+読み取り権限をチェック
 5. ファイルを一行読み取り、"date | value"を検証
+6. Invalid Format と　Value Error の２段階で検証
 
 
 ## パーサの実装方針
@@ -113,4 +114,3 @@ std::sort(data.begin(), data.end(), DateValueLess());
 
 1. std::lower_bound() で「引数以下の要素で最大のもの」を返す
 2. なかったらエラー
-
