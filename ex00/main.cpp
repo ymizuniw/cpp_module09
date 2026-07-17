@@ -178,15 +178,15 @@ bool check_date_range(std::string date, Error &err, bool db)
     int mm = 0;
     int dd = 0;
 
-    i = 0;
+    int i = 0;
     for (;i<4;++i)
     {
-        yyyy = yyyy*10 + date[i];
+        yyyy = yyyy*10 + (date[i] - '0');
     }
     if (!(0<yyyy && yyyy<=2030))
     {
         err.err_num = 1;
-        err.err_msg = "Invalid Value: Out of Range: line: " + std::to_string(err.line_num) + ": " + date;
+        err.err_msg = "Invalid Value: Out of Range [Year]: line: " + std::to_string(err.line_num) + ": " + date;
         if (db)
             throw std::runtime_error(err.err_msg);
         return (false);
@@ -194,12 +194,12 @@ bool check_date_range(std::string date, Error &err, bool db)
     i++;
     for (;i<7;++i)
     {
-        mm = mm * 10 + date[i];
+        mm = mm * 10 + (date[i] - '0');
     }
     if (!(1<=mm && mm<=12))
     {
         err.err_num = 1;
-        err.err_msg = "Invalid Value: Out of Range: line: " + std::to_string(err.line_num) + ": " + date;
+        err.err_msg = "Invalid Value: Out of Range [Month]: line: " + std::to_string(err.line_num) + ": " + date;
         if (db)
             throw std::runtime_error(err.err_msg);
         return (false);
@@ -207,12 +207,12 @@ bool check_date_range(std::string date, Error &err, bool db)
     i++;
     for (;i<10;++i)
     {
-        dd = dd * 10 + date[i];
+        dd = dd * 10 + (date[i] - '0');
     }
     if (!check_dd_range(dd, mm, yyyy))
    {
         err.err_num = 1;
-        err.err_msg = "Invalid Value: Out of Range: line: " + std::to_string(err.line_num) + ": " + date;
+        err.err_msg = "Invalid Value: Out of Range [Day]: line: " + std::to_string(err.line_num) + ": " + date;
         if (db)
             throw std::runtime_error(err.err_msg);
         return (false);
