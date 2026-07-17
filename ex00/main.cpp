@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <sstream>
 
-
 struct Error
 {
     int err_num;
@@ -18,6 +17,7 @@ struct DateValue
     Error err;
     std::string date;
     float val;
+    bool operator<(const DateValue &other) const;
 };
 
 void check_csv_file(std::ifstream &file_stream, std::string format, bool db)
@@ -368,6 +368,70 @@ std::vector<DateValue> parse_data(std::vector<std::vector<std::string>> &node, b
     return (vec_date_val);
 }
 
+std::vector<DateValue> generate_date_reference(std::vector<DateValue> const &db_data, std::vector<DateValue> const &input_data)
+{
+    // axis is input_data. search lower_bound date from db_data, and calculate the rate * value and set as value.
+    // if input_data has error status in the node, then set appropriate error message and set flag appropriately.
+    std::vector<DateValue> ref_data;
+
+    std::vector<DateValue>::const_iterator db_start = db_data.begin();
+    std::vector<DateValue>::const_iterator db_end = db_data.end();
+    std::vector<DateValue>::const_iterator input_it = input_data.begin();
+    std::vector<DateValue>::const_iterator input_end = input_data.end();
+    std::vector<DateValue>::const_iterator target_it;
+    
+    while (input_it!=input_end)
+    {
+        DateValue new_date;
+
+        if ((*input_it).err.err_num!=0)
+        {
+            new_date = (*input_it);
+            continue;
+        }
+        target_it = std::lower_bound(db_start, db_end, *input_it);
+        if (target_it==db_end)
+        {
+            //not found
+            new_date = (*input_it);
+            new_date.err.err_num = 2;
+            new_date.err.err_msg = "Not Found [Date]: line: " + std::to_string(new_date.err.line_num) + " : " + new_date.date;
+            continue;
+        }
+        else
+        {
+            new_date.date = (*target_it).date;
+            new_date.err = (*target_it).err;
+            if (new_date.err.err_num==0)
+                new_date.val = (*target_it).val * (*input_it).val;
+            else
+                new_date.val = 0.f;
+        }
+        ref_data.push_back(new_date);
+        ++input_it;
+    }
+    return (ref_data);
+}
+
+// bool operator<(const DateValue &other) const; to compare DateValue struct by Date
+bool DateValue::operator<(const DateValue &other) const
+{
+    return (this->date < other.date);
+}
+
+// error handling based on the error status of each nodes are needed.
+void print_data(std::vector<DateValue> &data)
+{
+    std::vector<DateValue>::iterator it = data.begin();
+    std::vector<DateValue>::iterator end_it = data.end();
+
+    while (it!=end_it)
+    {
+        std::cout << (*it).date + " => " + std::to_string((*it).val) << std::endl;
+        ++it;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
@@ -389,37 +453,20 @@ int main(int argc, char *argv[])
         std::vector<std::vector<std::string>> input_nodes = csv_parser(input_file_stream, '|', false);
         
         trim_spaces_from_input(input_nodes);
-        // print_tokens(input_nodes);
 
-        //date validation
-        /*
-            1. the length : 2000-01-01 = 10
-            2. check [four digits] [-] [two digits] [-] [two digits]
-            3. get yyyy[four digits] (skip++) mm[two digits] (skip++) dd[two digits]
-            4. check the range of year, mon, and day.
-        */
-        //DB should be the perfect status
-        /*DB validation
-            date_format
-            date_value
-        */
         std::vector<DateValue> db_data = parse_data(db_nodes, true);
         std::vector<DateValue> input_data = parse_data(input_nodes, false);
-        //value validation
-        /*
-            1. try the convertion to float
-            2. check the sign of the converted value
-        */
-        
+
+        std::sort(db_data.begin(), db_data.end());
+        std::sort(input_data.begin(), input_data.end());
+        std::vector<DateValue> referenced_data = generate_date_reference(db_data, input_data);
+
+        print_data(referenced_data);
     } catch(std::exception &e){
         std::cout << e.what() << std::endl;
         return (1);
     }
-        
-    // select date and return the exchange rate
-
-    // calculate the index value
-
+    
     // print the index value
 
     return(0);
