@@ -1,5 +1,3 @@
-
-
 - The program name is RPN.
 
 - Your program must take an inverted Polish mathematical expression as an argument.
@@ -15,4 +13,3 @@ standard output.
 displayed on the standard error.
 
 - Your program must be able to handle operations with these tokens: "+ - / *"
-
