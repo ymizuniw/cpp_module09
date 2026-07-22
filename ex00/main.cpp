@@ -117,11 +117,6 @@ std::vector<std::vector<std::string> > csv_parser(std::ifstream &file_stream, co
     while (std::getline(file_stream, line))
     {
         std::vector<std::string> tokens = split_line(line, delim);
-        // if (db)
-        // {
-        //     if (count++<10)
-        //         std::cout << "line: " << tokens[0] << " | " << tokens[1] << std::endl;
-        // }
         nodes.push_back(tokens);
     }
     check_split_tokens(nodes, db);
@@ -297,7 +292,6 @@ bool check_date_format(std::string date, Error &err, bool db)
             return (false);
         }
     }
-    // std::cout << "date: " << date << " is valid" << std::endl;
     return (true);
 }
 
@@ -358,7 +352,6 @@ float parse_value(std::string const &val, Error &err, bool db)
     }
     if (try_val<0.f)
     {
-        // std::cout << "try_val: " << try_val << std::endl;
         if (db)
             throw std::runtime_error("DB: Invalid Value: Not a Positive: line: " + std::to_string(err.line_num) + " : " + val);
         set_error(err, 1, err.line_num, "Invalid Value: Not a Positive: line: " + std::to_string(err.line_num) + " : " + val);
@@ -494,7 +487,6 @@ int main(int argc, char *argv[])
 
         std::vector<std::vector<std::string> > db_nodes = csv_parser(db_file_stream, ',', true);
         std::vector<std::vector<std::string> > input_nodes = csv_parser(input_file_stream, '|', false);
-        // std::cout << "db_nodes size: " << db_nodes.size() << std::endl;
         trim_spaces_from_input(input_nodes);
 
         std::vector<DateValue> db_data = parse_data(db_nodes, true);
@@ -508,6 +500,5 @@ int main(int argc, char *argv[])
         std::cout << e.what() << std::endl;
         return (1);
     }
-    // print the index value
     return(0);
 }
