@@ -70,10 +70,10 @@ std::vector<std::string> split_line(std::string &line, const char delim)
     return (tokens);
 }
 
-void print_tokens(std::vector<std::vector<std::string>> &nodes)
+void print_tokens(std::vector<std::vector<std::string> > &nodes)
 {
-    std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
-    std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
+    std::vector<std::vector<std::string> >::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string> >::iterator row_end = nodes.end();
 
     while (row_it!=row_end)
     {
@@ -86,10 +86,10 @@ void print_tokens(std::vector<std::vector<std::string>> &nodes)
 /*
     1. check tokens in a node is split into two tokens
 */
-void check_split_tokens(std::vector<std::vector<std::string>> &nodes, bool db)
+void check_split_tokens(std::vector<std::vector<std::string> > &nodes, bool db)
 {
-    std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
-    std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
+    std::vector<std::vector<std::string> >::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string> >::iterator row_end = nodes.end();
 
     size_t line_num = 2;
     while (row_it!=row_end)
@@ -109,9 +109,9 @@ void check_split_tokens(std::vector<std::vector<std::string>> &nodes, bool db)
 
 int count = 0;
 
-std::vector<std::vector<std::string>> csv_parser(std::ifstream &file_stream, const char delim, bool db)
+std::vector<std::vector<std::string> > csv_parser(std::ifstream &file_stream, const char delim, bool db)
 {
-    std::vector<std::vector<std::string>> nodes;
+    std::vector<std::vector<std::string> > nodes;
     std::string line;
 
     while (std::getline(file_stream, line))
@@ -128,10 +128,10 @@ std::vector<std::vector<std::string>> csv_parser(std::ifstream &file_stream, con
     return (nodes);
 }
 
-void trim_spaces_from_input(std::vector<std::vector<std::string>> &nodes)
+void trim_spaces_from_input(std::vector<std::vector<std::string> > &nodes)
 {
-    std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
-    std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
+    std::vector<std::vector<std::string> >::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string> >::iterator row_end = nodes.end();
 
     size_t line_num = 2;
     while (row_it!=row_end)
@@ -386,10 +386,10 @@ DateValue create_line_node(std::vector<std::string> row, int line_num, bool db)
     return (node);
 }
 
-std::vector<DateValue> parse_data(std::vector<std::vector<std::string>> &node, bool db)
+std::vector<DateValue> parse_data(std::vector<std::vector<std::string> > &node, bool db)
 {
-    std::vector<std::vector<std::string>>::const_iterator row_it = node.begin();
-    std::vector<std::vector<std::string>>::const_iterator row_end = node.end();
+    std::vector<std::vector<std::string> >::const_iterator row_it = node.begin();
+    std::vector<std::vector<std::string> >::const_iterator row_end = node.end();
 
     std::vector<DateValue> vec_date_val;
     int line_num = 2;
@@ -492,8 +492,8 @@ int main(int argc, char *argv[])
         check_csv_file(db_file_stream,"date,exchange_rate", true);
         check_csv_file(input_file_stream,"date | value", false);
 
-        std::vector<std::vector<std::string>> db_nodes = csv_parser(db_file_stream, ',', true);
-        std::vector<std::vector<std::string>> input_nodes = csv_parser(input_file_stream, '|', false);
+        std::vector<std::vector<std::string> > db_nodes = csv_parser(db_file_stream, ',', true);
+        std::vector<std::vector<std::string> > input_nodes = csv_parser(input_file_stream, '|', false);
         // std::cout << "db_nodes size: " << db_nodes.size() << std::endl;
         trim_spaces_from_input(input_nodes);
 
