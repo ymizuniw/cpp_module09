@@ -20,6 +20,15 @@ struct DateValue
     bool operator<(const DateValue &other) const;
 };
 
+void set_error(Error &err, int err_num, int line_num, std::string err_msg)
+{
+    if (err.err_num!=0)
+        return ;
+    err.err_num = err_num;
+    err.line_num = line_num;
+    err.err_msg = err_msg;
+}
+
 void check_csv_file(std::ifstream &file_stream, std::string format, bool db)
 {
     // check the first line of csv
@@ -29,7 +38,7 @@ void check_csv_file(std::ifstream &file_stream, std::string format, bool db)
         if (line!=format)
         {
             if (db)
-                throw std::runtime_error("DB: Invalid Format: " + line);
+                throw std::runtime_error("DB: Invalid Format" + line);
             throw std::runtime_error("Invalid Format" + line);
         }
     }
@@ -54,9 +63,9 @@ std::vector<std::string> split_line(std::string &line, const char delim)
     iss.exceptions(std::ios_base::badbit);
     while (std::getline(iss, token, delim))
     {
-        if (!token.empty()){
+        // if (!token.empty()){
             tokens.push_back(token);
-        }
+        // }
     }
     return (tokens);
 }
@@ -82,19 +91,23 @@ void check_split_tokens(std::vector<std::vector<std::string>> &nodes, bool db)
     std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
     std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
 
-    size_t line_num = 1;
+    size_t line_num = 2;
     while (row_it!=row_end)
     {
         if (row_it->size()!=2)
         {
             if (db)
+            {
                 throw std::runtime_error("DB: Invalid line format: " + std::to_string(line_num));
+            }
             throw std::runtime_error("Invalid line format: " + std::to_string(line_num));
         }
         ++line_num;
         ++row_it;
     }
 }
+
+int count = 0;
 
 std::vector<std::vector<std::string>> csv_parser(std::ifstream &file_stream, const char delim, bool db)
 {
@@ -104,6 +117,11 @@ std::vector<std::vector<std::string>> csv_parser(std::ifstream &file_stream, con
     while (std::getline(file_stream, line))
     {
         std::vector<std::string> tokens = split_line(line, delim);
+        // if (db)
+        // {
+        //     if (count++<10)
+        //         std::cout << "line: " << tokens[0] << " | " << tokens[1] << std::endl;
+        // }
         nodes.push_back(tokens);
     }
     check_split_tokens(nodes, db);
@@ -115,7 +133,7 @@ void trim_spaces_from_input(std::vector<std::vector<std::string>> &nodes)
     std::vector<std::vector<std::string>>::iterator row_it = nodes.begin();
     std::vector<std::vector<std::string>>::iterator row_end = nodes.end();
 
-    size_t line_num = 1;
+    size_t line_num = 2;
     while (row_it!=row_end)
     {
         if ((*row_it)[0].empty() || (*row_it)[1].empty())
@@ -183,12 +201,13 @@ bool check_date_range(std::string date, Error &err, bool db)
     {
         yyyy = yyyy*10 + (date[i] - '0');
     }
-    if (!(0<yyyy && yyyy<=2030))
+    if (!(1900<yyyy && yyyy<=2030))
     {
-        err.err_num = 1;
-        err.err_msg = "Invalid Value: Out of Range [Year]: line: " + std::to_string(err.line_num) + ": " + date;
         if (db)
-            throw std::runtime_error(err.err_msg);
+        {
+            throw std::runtime_error("DB: Invalid Date: [Year]: line: " + std::to_string(err.line_num) + ": " + date);
+        }
+        set_error(err, 1, err.line_num, "Invalid Date: [Year]: line: " + std::to_string(err.line_num) + ": " + date);
         return (false);
     }
     i++;
@@ -198,10 +217,9 @@ bool check_date_range(std::string date, Error &err, bool db)
     }
     if (!(1<=mm && mm<=12))
     {
-        err.err_num = 1;
-        err.err_msg = "Invalid Value: Out of Range [Month]: line: " + std::to_string(err.line_num) + ": " + date;
+        set_error(err, 1, err.line_num, "Invalid Date: [Month]: line: " + std::to_string(err.line_num) + ": " + date);
         if (db)
-            throw std::runtime_error(err.err_msg);
+            throw std::runtime_error("DB: " + err.err_msg);
         return (false);
     }
     i++;
@@ -211,8 +229,8 @@ bool check_date_range(std::string date, Error &err, bool db)
     }
     if (!check_dd_range(dd, mm, yyyy))
    {
-        err.err_num = 1;
-        err.err_msg = "Invalid Value: Out of Range [Day]: line: " + std::to_string(err.line_num) + ": " + date;
+        std::cout << "dd: " << dd << " mm: " << mm << " yyyy: " << yyyy << std::endl;
+        set_error(err, 1, err.line_num, "Invalid Date: [Day]: line: " + std::to_string(err.line_num) + ": " + date);
         if (db)
             throw std::runtime_error(err.err_msg);
         return (false);
@@ -225,14 +243,13 @@ bool check_date_value(std::string const row_value, Error &err, bool db)
     return (check_date_range(row_value, err, db));
 }
 
-bool check_date_format(std::string date, Error err, bool db)
+bool check_date_format(std::string date, Error &err, bool db)
 {
     if (date.length() != 10)
     {
-        err.err_num = 1;
-        err.err_msg = "Invalid Format: line: " + std::to_string(err.line_num) + ": " + date;
+        set_error(err, 1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
         if (db)
-            throw std::runtime_error(err.err_msg);
+            throw std::runtime_error("DB: " + err.err_msg);
         return (false);
     }
     int i=0;
@@ -240,52 +257,47 @@ bool check_date_format(std::string date, Error err, bool db)
     {
         if (!std::isdigit(date[i]))
         {
-            err.err_num = 1;
-            err.err_msg = "Invalid Format: line: " + std::to_string(err.line_num) + ": " + date;
+            set_error(err, 1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
             if (db)
-                throw std::runtime_error(err.err_msg);
+                throw std::runtime_error("DB: " + err.err_msg);
             return (false);
         }
     }
     if (date[i++]!='-')
     {
-        err.err_num = 1;
-        err.err_msg = "Invalid Format: line: " + std::to_string(err.line_num) + ": " + date;
+        set_error(err, 1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
         if (db)
-            throw std::runtime_error(err.err_msg);
+            throw std::runtime_error("DB: " + err.err_msg);
         return (false);
     }
     for (;i<7;++i)
     {
         if (!std::isdigit(date[i]))
         {
-            err.err_num = 1;
-            err.err_msg = "Invalid Format: line: " + std::to_string(err.line_num) + ": " + date;
+            set_error(err, 1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
             if (db)
-                throw std::runtime_error(err.err_msg);      
+                throw std::runtime_error("DB: " + err.err_msg);      
             return (false);
         }
     }
     if (date[i++]!='-')
     {
-        err.err_num = 1;
-        err.err_msg = "Invalid Format: line: " + std::to_string(err.line_num) + ": " + date;
+        set_error(err, 1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
         if (db)
-            throw std::runtime_error(err.err_msg);
+            throw std::runtime_error("DB: " + err.err_msg);
         return (false);
     }
-
     for (;i<10;++i)
     {
         if (!std::isdigit(date[i]))
         {
-            err.err_num = 1;
-            err.err_msg = "Invalid Format: line: " + std::to_string(err.line_num) + ": " + date;
+            set_error(err, 1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
             if (db)
-                throw std::runtime_error(err.err_msg);
-            }
+                throw std::runtime_error("DB: " + err.err_msg);
             return (false);
+        }
     }
+    // std::cout << "date: " << date << " is valid" << std::endl;
     return (true);
 }
 
@@ -308,7 +320,10 @@ bool check_date_format(std::string date, Error err, bool db)
 std::string parse_date(std::string const &raw_date, Error &err, bool db)
 {
     //check_date_format
-    check_date_format(raw_date, err, db);
+    if (!check_date_format(raw_date, err, db))
+    {
+        return ("");
+    }
     //check_date_value: DBのみ値エラーで例外処理。入力ファイルはノードにエラーステータスを設定
     check_date_value(raw_date, err, db);
     std::string date = raw_date;
@@ -326,8 +341,9 @@ float try_parse_value(std::string const &val, Error &err, bool db)
     ss >> try_val;
     if (ss.fail())
     {
-        err.err_num = 1;
-        err.err_msg = "Invalid Value: line: " + std::to_string(err.line_num) + " : " + val;
+        set_error(err, 1, err.line_num, "Invalid Value: line: " + std::to_string(err.line_num) + " : " + val);
+        if (db)
+            throw std::runtime_error("DB: " + err.err_msg);
         return (0.f);
     }
     return (try_val);
@@ -335,7 +351,27 @@ float try_parse_value(std::string const &val, Error &err, bool db)
 
 float parse_value(std::string const &val, Error &err, bool db)
 {
-    return (try_parse_value(val, err, db));
+    float try_val = try_parse_value(val, err, db);
+    if (err.err_num!=0)
+    {
+        return (try_val);
+    }
+    if (try_val<0.f)
+    {
+        // std::cout << "try_val: " << try_val << std::endl;
+        if (db)
+            throw std::runtime_error("DB: Invalid Value: Not a Positive: line: " + std::to_string(err.line_num) + " : " + val);
+        set_error(err, 1, err.line_num, "Invalid Value: Not a Positive: line: " + std::to_string(err.line_num) + " : " + val);
+        return (0.f);
+    }
+    if (try_val>1000.f)
+    {
+        if (db)
+            throw std::runtime_error("DB: Invalid Value: Too Large: line: " + std::to_string(err.line_num) + " : " + val);
+        set_error(err, 1, err.line_num, "Invalid Value: Too Large: line: " + std::to_string(err.line_num) + " : " + val);
+        return (0.f);
+    }
+    return (try_val);
 }
 
 DateValue create_line_node(std::vector<std::string> row, int line_num, bool db)
@@ -343,6 +379,8 @@ DateValue create_line_node(std::vector<std::string> row, int line_num, bool db)
     DateValue node;
 
     node.err.line_num = line_num;
+    node.err.err_num = 0;
+    node.err.err_msg = "";
     node.date = parse_date(row[0], node.err, db);
     node.val = parse_value(row[1], node.err, db);
     return (node);
@@ -353,11 +391,9 @@ std::vector<DateValue> parse_data(std::vector<std::vector<std::string>> &node, b
     std::vector<std::vector<std::string>>::const_iterator row_it = node.begin();
     std::vector<std::vector<std::string>>::const_iterator row_end = node.end();
 
-    // size_t data_size = node.size();
     std::vector<DateValue> vec_date_val;
-    int line_num = 0;
+    int line_num = 2;
 
-    //loop for each line
     while (row_it!=row_end)
     {
         std::vector<std::string> col_it = (*row_it);
@@ -370,8 +406,6 @@ std::vector<DateValue> parse_data(std::vector<std::vector<std::string>> &node, b
 
 std::vector<DateValue> generate_date_reference(std::vector<DateValue> const &db_data, std::vector<DateValue> const &input_data)
 {
-    // axis is input_data. search lower_bound date from db_data, and calculate the rate * value and set as value.
-    // if input_data has error status in the node, then set appropriate error message and set flag appropriately.
     std::vector<DateValue> ref_data;
 
     std::vector<DateValue>::const_iterator db_start = db_data.begin();
@@ -387,6 +421,8 @@ std::vector<DateValue> generate_date_reference(std::vector<DateValue> const &db_
         if ((*input_it).err.err_num!=0)
         {
             new_date = (*input_it);
+            ref_data.push_back(new_date);
+            ++input_it;
             continue;
         }
         target_it = std::lower_bound(db_start, db_end, *input_it);
@@ -394,8 +430,9 @@ std::vector<DateValue> generate_date_reference(std::vector<DateValue> const &db_
         {
             //not found
             new_date = (*input_it);
-            new_date.err.err_num = 2;
-            new_date.err.err_msg = "Not Found [Date]: line: " + std::to_string(new_date.err.line_num) + " : " + new_date.date;
+            set_error(new_date.err, 2, new_date.err.line_num, "Not Found [Date]: line: " + std::to_string(new_date.err.line_num) + " : " + new_date.date);
+            ref_data.push_back(new_date);
+            ++input_it;
             continue;
         }
         else
@@ -427,6 +464,12 @@ void print_data(std::vector<DateValue> &data)
 
     while (it!=end_it)
     {
+        if ((*it).err.err_num!=0)
+        {
+            std::cout << (*it).err.err_msg << std::endl;
+            ++it;
+            continue;
+        }
         std::cout << (*it).date + " => " + std::to_string((*it).val) << std::endl;
         ++it;
     }
@@ -451,7 +494,7 @@ int main(int argc, char *argv[])
 
         std::vector<std::vector<std::string>> db_nodes = csv_parser(db_file_stream, ',', true);
         std::vector<std::vector<std::string>> input_nodes = csv_parser(input_file_stream, '|', false);
-        
+        // std::cout << "db_nodes size: " << db_nodes.size() << std::endl;
         trim_spaces_from_input(input_nodes);
 
         std::vector<DateValue> db_data = parse_data(db_nodes, true);
@@ -460,14 +503,11 @@ int main(int argc, char *argv[])
         std::sort(db_data.begin(), db_data.end());
         std::sort(input_data.begin(), input_data.end());
         std::vector<DateValue> referenced_data = generate_date_reference(db_data, input_data);
-
         print_data(referenced_data);
     } catch(std::exception &e){
         std::cout << e.what() << std::endl;
         return (1);
     }
-    
     // print the index value
-
     return(0);
 }
