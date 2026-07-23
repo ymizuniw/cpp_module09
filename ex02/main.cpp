@@ -21,27 +21,52 @@
     3. incert the remaining elements in the order of Jacobsthal numbers by binary search in the sorted larger group.
 */
 
-struct idx_value
+struct IdxValue
 {
     int idx;
     int val;
 };
 
-struct pair
-{
-    idx_value large;
-    idx_value small;
-};
+/*
+    std::deque<IdxValue> data;
 
-void print_pairs(pair p[], size_t size)
+*/
+
+std::deque<IdxValue> merge_insertion(std::deque<IdxValue> data)
 {
-    size_t idx = 0;
-    while (idx<size)
-    {
-        std::cout << "idx: " << idx << std::endl;
-        std::cout << "Large: " << p[idx].large.val << " Small: " << p[idx].small.val << std::endl;
-        ++idx;
-    }
+    /*
+        pairing data
+        merge_insertion to main chain
+        binary insertion in the order of jacobian
+    */
+   /*
+        1. how to pair the data and keep the idx?
+            construct a new deque<IdxValue> "main_chain" its size if half of the original data, 
+        and push (and pop() to delete it correctly) the contents of the argument (deque<IdxValue>)data's
+        elements to it after the comparison between suceeding ones.
+   */
+
+   /*
+        2. call merge_insertion() that is passed the main_chain created at 1.,
+            and get the main_chain sorted.
+   */
+    
+   /*
+        3. select one element in the pend_chain in the order of jacobian,
+             search the main_chain element corresponding to the idx of the selected one,
+              setting the upper limit of binary search to find the inserting place
+                 to the index of the main_chain.
+            repeat this till all the pend_chain elements are inserted.
+   */
+
+    /*
+        if the size is odd, the remain = data[size-1];
+        and handle this as the last element of the pending elements to the main_chain.
+    */
+
+    // binary insertion in the order of jacobian
+
+    return (sorted_main_chain);
 }
 
 int main(int argc, char *argv[])
@@ -62,54 +87,59 @@ int main(int argc, char *argv[])
         tmp[i - 1] = std::atoi(argv[i]);
     }
 
-    // Pair up the elements
-    size_t size = (argc - 1);
-    bool odd = false;
-    idx_value remain;
-    if (size % 2 != 0)
-    {
-        odd = true;
-        remain.idx = size - 1;
-        remain.val = tmp[size - 1];
-        --size;
-    }
+    /*
+        Distribute the tmp vals to container(deque as default)
+    */
 
-    pair pairs[size/2];
-    for (size_t i=0;i<size/2;++i)
-    {
-        pairs[i].large.idx = i;
-        pairs[i].large.val = 0;
-        pairs[i].small.idx = i;
-        pairs[i].small.val = 0;
-    }
 
-    size_t tmp_idx = 0;
-    size_t pair_idx = 0;
+    // // IdxValue up the elements
+    // size_t size = (argc - 1);
+    // bool odd = false;
+    // IdxValue remain;
+    // if (size % 2 != 0)
+    // {
+    //     odd = true;
+    //     remain.idx = size - 1;
+    //     remain.val = tmp[size - 1];
+    //     --size;
+    // }
 
-    while (pair_idx<size/2)
-    {
-        pairs[pair_idx].large.idx = pair_idx;
-        pairs[pair_idx].small.idx = pair_idx;
-        size_t large = 0;
-        size_t small = 0;
+    // IdxValue pairs[size/2];
+    // for (size_t i=0;i<size/2;++i)
+    // {
+    //     pairs[i].large.idx = i;
+    //     pairs[i].large.val = 0;
+    //     pairs[i].small.idx = i;
+    //     pairs[i].small.val = 0;
+    // }
 
-        if (tmp[tmp_idx]<tmp[tmp_idx+1])
-        {
-            std::cout << tmp[tmp_idx+1] << " is larger than " << tmp[tmp_idx] << std::endl; 
-            large = tmp[tmp_idx+1];
-            small = tmp[tmp_idx];
-        }
-        else
-        {
-            std::cout << tmp[tmp_idx] << " is larger than " << tmp[tmp_idx+1] << std::endl; 
-            large = tmp[tmp_idx];
-            small = tmp[tmp_idx+1];    
-        }
-        pairs[pair_idx].large.val = large;
-        pairs[pair_idx].small.val = small;
-        ++pair_idx;
-        tmp_idx = tmp_idx + 2;
-    }
+    // size_t tmp_idx = 0;
+    // size_t pair_idx = 0;
+
+    // while (pair_idx<size/2)
+    // {
+    //     pairs[pair_idx].large.idx = pair_idx;
+    //     pairs[pair_idx].small.idx = pair_idx;
+    //     size_t large = 0;
+    //     size_t small = 0;
+
+    //     if (tmp[tmp_idx]<tmp[tmp_idx+1])
+    //     {
+    //         std::cout << tmp[tmp_idx+1] << " is larger than " << tmp[tmp_idx] << std::endl; 
+    //         large = tmp[tmp_idx+1];
+    //         small = tmp[tmp_idx];
+    //     }
+    //     else
+    //     {
+    //         std::cout << tmp[tmp_idx] << " is larger than " << tmp[tmp_idx+1] << std::endl; 
+    //         large = tmp[tmp_idx];
+    //         small = tmp[tmp_idx+1];    
+    //     }
+    //     pairs[pair_idx].large.val = large;
+    //     pairs[pair_idx].small.val = small;
+    //     ++pair_idx;
+    //     tmp_idx = tmp_idx + 2;
+    // }
     // print_pairs(pairs, size/2);
 
     // Reccursively sort the larger group

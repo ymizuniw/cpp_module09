@@ -18,13 +18,11 @@
         5. The final result will be the only number left in the stack.
 */
 
+
 int main(int argc, char *argv[])
 {
     if (argc != 2)
-    {
-        std::cerr << "Usage: " << argv[0] << " \"<RPN expression>\"" << std::endl;
         return (1);
-    }
 
     std::string input = argv[1];
     size_t i = 0;
@@ -42,7 +40,7 @@ int main(int argc, char *argv[])
             std::cout << "operator: " << input[i] << std::endl;
             if (rpn_stack.size()<2)
             {
-                std::cerr << "Error: Not enough operands for operator: " << input[i] << std::endl;
+                std::cout << "Error: Not enough operands for operator: " << input[i] << std::endl;
                 return (1);
             }
             int rh = rpn_stack.top();
@@ -64,7 +62,7 @@ int main(int argc, char *argv[])
                 case '/':
                     if (rh == 0)
                     {
-                        std::cerr << "Error: Division by zero" << std::endl;
+                        std::cout << "Error: Division by zero" << std::endl;
                         return (1);
                     }
                     result = lh / rh;
@@ -78,14 +76,14 @@ int main(int argc, char *argv[])
         }
         else
         {
-            std::cerr << "Invalid character: " << input[i] << std::endl;
+            std::cout << "Invalid character: " << input[i] << std::endl;
             return (1);
         }
         ++i;
     }
     if (rpn_stack.size() != 1)
     {
-        std::cerr << "Error: Invalid expression" << std::endl;
+        std::cout << "Error: Invalid expression" << std::endl;
         return (1);
     }
     std::cout << "Result: " << rpn_stack.top() << std::endl;
