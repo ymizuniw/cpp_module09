@@ -21,6 +21,29 @@
     3. incert the remaining elements in the order of Jacobsthal numbers by binary search in the sorted larger group.
 */
 
+struct idx_value
+{
+    int idx;
+    int val;
+};
+
+struct pair
+{
+    idx_value large;
+    idx_value small;
+};
+
+void print_pairs(pair p[], size_t size)
+{
+    size_t idx = 0;
+    while (idx<size)
+    {
+        std::cout << "idx: " << idx << std::endl;
+        std::cout << "Large: " << p[idx].large.val << " Small: " << p[idx].small.val << std::endl;
+        ++idx;
+    }
+}
+
 int main(int argc, char *argv[])
 {
     if (argc < 2)
@@ -28,7 +51,7 @@ int main(int argc, char *argv[])
         std::cerr << "Usage: " << argv[0] << " <list of integers>" << std::endl;
         return (1);
     }
-    
+
     int tmp[argc - 1];
     for (int i = 1; i < argc; ++i)
     {
@@ -40,8 +63,54 @@ int main(int argc, char *argv[])
     }
 
     // Pair up the elements
+    size_t size = (argc - 1);
+    bool odd = false;
+    idx_value remain;
+    if (size % 2 != 0)
+    {
+        odd = true;
+        remain.idx = size - 1;
+        remain.val = tmp[size - 1];
+        --size;
+    }
 
-    // Compare each pair
+    pair pairs[size/2];
+    for (size_t i=0;i<size/2;++i)
+    {
+        pairs[i].large.idx = i;
+        pairs[i].large.val = 0;
+        pairs[i].small.idx = i;
+        pairs[i].small.val = 0;
+    }
+
+    size_t tmp_idx = 0;
+    size_t pair_idx = 0;
+
+    while (pair_idx<size/2)
+    {
+        pairs[pair_idx].large.idx = pair_idx;
+        pairs[pair_idx].small.idx = pair_idx;
+        size_t large = 0;
+        size_t small = 0;
+
+        if (tmp[tmp_idx]<tmp[tmp_idx+1])
+        {
+            std::cout << tmp[tmp_idx+1] << " is larger than " << tmp[tmp_idx] << std::endl; 
+            large = tmp[tmp_idx+1];
+            small = tmp[tmp_idx];
+        }
+        else
+        {
+            std::cout << tmp[tmp_idx] << " is larger than " << tmp[tmp_idx+1] << std::endl; 
+            large = tmp[tmp_idx];
+            small = tmp[tmp_idx+1];    
+        }
+        pairs[pair_idx].large.val = large;
+        pairs[pair_idx].small.val = small;
+        ++pair_idx;
+        tmp_idx = tmp_idx + 2;
+    }
+    // print_pairs(pairs, size/2);
 
     // Reccursively sort the larger group
 
