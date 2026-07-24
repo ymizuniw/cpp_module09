@@ -21,50 +21,29 @@
     3. incert the remaining elements in the order of Jacobsthal numbers by binary search in the sorted larger group.
 */
 
-struct IdxValue
-{
+struct IdxValue{
     int idx;
-    int val;
+    int value;
 };
 
-/*
-    std::deque<IdxValue> data;
+struct IdxPair{
+    int large;
+    int small;
+};
 
-*/
 
-std::deque<IdxValue> merge_insertion(std::deque<IdxValue> data)
+
+std::deque<IdxValue> FordJohnson(std::deque<IdxValue> data)
 {
-    /*
-        pairing data
-        merge_insertion to main chain
-        binary insertion in the order of jacobian
-    */
-   /*
-        1. how to pair the data and keep the idx?
-            construct a new deque<IdxValue> "main_chain" its size if half of the original data, 
-        and push (and pop() to delete it correctly) the contents of the argument (deque<IdxValue>)data's
-        elements to it after the comparison between suceeding ones.
-   */
+    std::deque<IdxValue> main_chain;
+    std::deque<IdxValue> pend_chain;
+    std::deque<IdxPair> idx_pair;
 
-   /*
-        2. call merge_insertion() that is passed the main_chain created at 1.,
-            and get the main_chain sorted.
-   */
-    
-   /*
-        3. select one element in the pend_chain in the order of jacobian,
-             search the main_chain element corresponding to the idx of the selected one,
-              setting the upper limit of binary search to find the inserting place
-                 to the index of the main_chain.
-            repeat this till all the pend_chain elements are inserted.
-   */
+    // Pairing()
 
-    /*
-        if the size is odd, the remain = data[size-1];
-        and handle this as the last element of the pending elements to the main_chain.
-    */
+    std::deque<IdxValue> sorted_main_chain = FordJohnson(main_chain);
 
-    // binary insertion in the order of jacobian
+    // Insertion()
 
     return (sorted_main_chain);
 }
@@ -91,11 +70,10 @@ int main(int argc, char *argv[])
         Distribute the tmp vals to container(deque as default)
     */
 
-
-    // // IdxValue up the elements
+    // KeyValue up the elements
     // size_t size = (argc - 1);
     // bool odd = false;
-    // IdxValue remain;
+    // KeyValue remain;
     // if (size % 2 != 0)
     // {
     //     odd = true;
@@ -104,7 +82,7 @@ int main(int argc, char *argv[])
     //     --size;
     // }
 
-    // IdxValue pairs[size/2];
+    // KeyValue pairs[size/2];
     // for (size_t i=0;i<size/2;++i)
     // {
     //     pairs[i].large.idx = i;

@@ -24,3 +24,5 @@ Merge-insertion sort performs the following steps on an input $X$ of $n$ element
 4. **Insert the smallest pair's partner.** Insert, at the start of `S`, the element that was paired with the first (smallest) element of `S`.
 
 5. **Insert the remaining elements.** Insert the remaining `⌈n/2⌉ − 1` elements of `X ∖ S` into `S`, one at a time, using a specially chosen insertion order (described below). For each insertion, use [binary search](https://en.wikipedia.org/wiki/Binary_search) within the appropriate subsequence of `S` to determine the correct position.
+
+- 
