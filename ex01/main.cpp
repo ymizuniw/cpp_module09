@@ -18,7 +18,6 @@
         5. The final result will be the only number left in the stack.
 */
 
-
 int main(int argc, char *argv[])
 {
     if (argc != 2)

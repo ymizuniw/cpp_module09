@@ -110,6 +110,34 @@ void Paring(std::deque<IdxValue> const &data, std::deque<IdxValue> &main_chain, 
     }
 }
 
+int search_small_idx_by_large_key(std::deque<IdxPair> const &idx_pair, int key)
+{
+    std::deque<IdxPair>::const_iterator it = idx_pair.begin();
+    std::deque<IdxPair>::const_iterator end_it = idx_pair.end();
+
+    while (it!=end_it)
+    {
+        if ((*it).large_idx==key)
+            return ((*it).small_idx);
+        ++it;
+    }
+    return (-1);
+}
+
+IdxValue get_value_by_idx(std::deque<IdxValue> &chain, int idx)
+{
+    std::deque<IdxValue>::const_iterator it = chain.begin();
+    std::deque<IdxValue>::const_iterator end_it = chain.end();
+
+    while (it!=end_it)
+    {
+        if ((*it).idx==idx)
+            return ((*it));
+        ++it;
+    }
+    return (IdxValue());// not so good
+}
+
 void Insertion(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &pend_chain, std::deque<IdxPair> &idx_pair)
 {
     // here, pend_chain elements would be inserted into sorted_main_chain, 
@@ -118,10 +146,19 @@ void Insertion(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &pe
 
     bool odd = (pend_chain.size()%2!=0);
 
-    // from begin() to specific_idx::iterator : paired element
+    // 1. Insert the pend_element of the smallest element in the sorted_main_chain
+    int key = sorted_main_chain[0].idx;
+    int small_idx = search_small_idx_by_large_key(idx_pair, key);
+    if (small_idx==-1)
+        throw std::runtime_error("Invalid Key");
+    IdxValue small_val = get_value_by_idx(pend_chain, small_idx);
+    // temporary validation
+    if (small_val.idx==-1)
+        throw std::runtime_error("Invalid Value");
+    sorted_main_chain.push_front(small_val);
 
-    // from begin() to end() : remaining element
-
+    // 2. Insert by the Jacobsthal
+    
 }
 
 std::deque<IdxValue> FordJohnson(std::deque<IdxValue> const &data)
