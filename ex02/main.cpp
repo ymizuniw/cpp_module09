@@ -20,27 +20,27 @@
     3. incert the remaining elements in the order of Jacobsthal numbers by binary search in the sorted larger group.
 */
 
-struct Dict{
+struct IdxValue{
     int idx;
     int value;
-    Dict();
-    Dict(const Dict &other);
-    Dict &operator=(const Dict &other);
-    bool operator<(const Dict &other) const;
-    bool operator<(const Dict &other);
+    IdxValue();
+    IdxValue(const IdxValue &other);
+    IdxValue &operator=(const IdxValue &other);
+    bool operator<(const IdxValue &other) const;
+    bool operator<(const IdxValue &other);
 };
 
 struct IdxPair{
     int main_chain_idx;
     int pend_idx;
     IdxPair();
-    IdxPair(const Dict &other);
+    IdxPair(const IdxValue &other);
     IdxPair &operator=(const IdxPair &other);
 };
 
-Dict::Dict(): idx(-1), value(-1){}
+IdxValue::IdxValue(): idx(-1), value(-1){}
 
-Dict::Dict(const Dict &other): idx(other.idx), value(other.value)
+IdxValue::IdxValue(const IdxValue &other): idx(other.idx), value(other.value)
 {
     if (this==&other)
         return ;
@@ -48,7 +48,7 @@ Dict::Dict(const Dict &other): idx(other.idx), value(other.value)
     this->value = other.value;
 }
 
-Dict &Dict::operator=(const Dict &other)
+IdxValue &IdxValue::operator=(const IdxValue &other)
 {
     if (this==&other)
         return (*this);
@@ -57,29 +57,29 @@ Dict &Dict::operator=(const Dict &other)
     return (*this);
 }
 
-bool Dict::operator<(const Dict &other) const
+bool IdxValue::operator<(const IdxValue &other) const
 {
     if (this->value<other.value)
         return (true);
     return (false);
 }
 
-bool Dict::operator<(const Dict &other)
+bool IdxValue::operator<(const IdxValue &other)
 {
     if (this->value<other.value)
         return (true);
     return (false);
 }
 
-void Paring(std::deque<Dict> const &data, std::deque<Dict> &main_chain, std::deque<Dict> &pend, std::deque<IdxPair> &idx_pair)
+void Paring(std::deque<IdxValue> const &data, std::deque<IdxValue> &main_chain, std::deque<IdxValue> &pend, std::deque<IdxPair> &idx_pair)
 {
     // split data into main_chain and pend keeping the idx of the values
     size_t size = data.size()/2;
 
     size_t pair_idx = 0;
     size_t data_idx = 0;
-    Dict large_value = Dict();
-    Dict pend_value = Dict();
+    IdxValue large_value = IdxValue();
+    IdxValue pend_value = IdxValue();
     IdxPair idx_pair_tmp = IdxPair();
 
     while (pair_idx<size)
@@ -130,16 +130,22 @@ int search_pair_idx(std::deque<IdxPair> const &idx_pair, int key, bool target_is
     return (-1);
 }
 
+// class IdxValue{
+//     // std::deque<IdxValueElem> index;
+//     // 
+//     // 
+// };
+
 // int x_main_idx = // search idx of the element its idx is key, from main_chain
-int get_idx_by_dict_idx(std::deque<Dict> &chain, int dict_idx)
+int get_idx_by_IdxValue_idx(std::deque<IdxValue> &chain, int IdxValue_idx)
 {
-    std::deque<Dict>::const_iterator it = chain.begin();
-    std::deque<Dict>::const_iterator end_it = chain.end();
+    std::deque<IdxValue>::const_iterator it = chain.begin();
+    std::deque<IdxValue>::const_iterator end_it = chain.end();
 
     int idx = 0;
     while (it!=end_it)
     {
-        if ((*it).idx==dict_idx)
+        if ((*it).idx==IdxValue_idx)
             return (idx);
         ++idx;
         ++it;
@@ -147,10 +153,10 @@ int get_idx_by_dict_idx(std::deque<Dict> &chain, int dict_idx)
     return (-1);
 }
 
-Dict get_value_by_idx(std::deque<Dict> &chain, int idx)
+IdxValue get_elem_by_idx(std::deque<IdxValue> &chain, int idx)
 {
-    std::deque<Dict>::const_iterator it = chain.begin();
-    std::deque<Dict>::const_iterator end_it = chain.end();
+    std::deque<IdxValue>::const_iterator it = chain.begin();
+    std::deque<IdxValue>::const_iterator end_it = chain.end();
 
     while (it!=end_it)
     {
@@ -158,10 +164,10 @@ Dict get_value_by_idx(std::deque<Dict> &chain, int idx)
             return ((*it));
         ++it;
     }
-    return (Dict());// not so good
+    return (IdxValue());// not so good
 }
 
-void InsertByJacobsthal(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &pend, std::deque<IdxPair> &idx_pair)
+void InsertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &pend, std::deque<IdxPair> &idx_pair)
 {
     // [y1, x1, x2, ..., xm]
     // [y2, y3, y4, ..., ym]
@@ -180,7 +186,7 @@ void InsertByJacobsthal(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &p
     // if (pendRemainSize<upper_idx_ceiling)
     //     upper_idx_ceiling = pendRemainSize;
     
-    // main_chainにおけるindexの検索は、main_chainのデータ型であるDictのidxを参照して、pend[i].idxと一致する要素の、main_chainにおける位置を検索する。
+    // main_chainにおけるindexの検索は、main_chainのデータ型であるIdxValueのidxを参照して、pend[i].idxと一致する要素の、main_chainにおける位置を検索する。
 
     // 1. [y1,x1]の完成後にy2を挿入することを考える
     //     ・y2に対する挿入インデックスの上界は、y2のペアx2のmain_chainにおけるインデックスである。
@@ -206,8 +212,8 @@ void InsertByJacobsthal(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &p
             upper_size_ceiling = size_pend;
         while (1)
         {
-            int x_dict_idx = search_pair_idx(idx_pair, pend[pend_idx].idx, false);
-            int x_main_idx = get_idx_by_dict_idx(sorted_main_chain, x_dict_idx);
+            int x_IdxValue_idx = search_pair_idx(idx_pair, pend[pend_idx].idx, false);
+            int x_main_idx = get_idx_by_IdxValue_idx(sorted_main_chain, x_IdxValue_idx);
             int space_size = x_main_idx + 1;
 
             if (space_size<upper_size_ceiling)
@@ -227,9 +233,16 @@ void InsertByJacobsthal(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &p
         while (tmp_end>pend_idx_start)
         {
             // insert pend[tmp_end] to sorted_main_chain
+            // pend[tmp_end] に対応するsorted_main_chainのインデックスを上限にして、
             // sorted_main_chain を二分探索してpend[tmp_end]の挿入箇所を取得する。
             // 取得した挿入箇所に挿入する。
             //　pend_size--;
+
+            // sorted_main_chainの範囲指定イテレータは、std::deque<IdxValude>::const_iterator型で取得可能
+            // 
+            // -> upper_bound(start, end, target, comp_func);
+            // deque で利用可能なinsert関数を使用してIdxValueを挿入する。
+
             tmp_end--;
         }
         pend_idx_start = pend_idx;// for the next loop
@@ -237,7 +250,7 @@ void InsertByJacobsthal(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &p
 
 }
 
-void Insertion(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &pend, std::deque<IdxPair> &idx_pair)
+void Insertion(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &pend, std::deque<IdxPair> &idx_pair)
 {
     // here, pend elements would be inserted into sorted_main_chain, 
     // but the idx_pair can be lacking for the last element in pend,
@@ -247,10 +260,10 @@ void Insertion(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &pend, std:
 
     // 1. Insert the pend_element of the smallest element in the sorted_main_chain
     int main_chain_key = sorted_main_chain[0].idx;
-    int pend_idx = search_pend_idx_by_main_chain_key(idx_pair, main_chain_key);
+    int pend_idx = search_pair_idx(idx_pair, main_chain_key, false);
     if (pend_idx==-1)
         throw std::runtime_error("Invalid Key");
-    Dict pend_val = get_value_by_idx(pend, pend_idx);
+    IdxValue pend_val = get_elem_by_idx(pend, pend_idx);
     if (pend_val.idx==-1)
         throw std::runtime_error("Invalid Value");
     sorted_main_chain.push_front(pend_val);
@@ -262,14 +275,14 @@ void Insertion(std::deque<Dict> &sorted_main_chain, std::deque<Dict> &pend, std:
 
 }
 
-std::deque<Dict> FordJohnson(std::deque<Dict> const &data)
+std::deque<IdxValue> FordJohnson(std::deque<IdxValue> const &data)
 {
-    std::deque<Dict> main_chain;
-    std::deque<Dict> pend;
+    std::deque<IdxValue> main_chain;
+    std::deque<IdxValue> pend;
     std::deque<IdxPair> idx_pair;
 
     // keep remaining data if odd ocunt
-    Dict remain = Dict();
+    IdxValue remain = IdxValue();
     if (data.size()%2!=0)
     {
         remain = data[data.size()-1];
@@ -278,7 +291,7 @@ std::deque<Dict> FordJohnson(std::deque<Dict> const &data)
     // Pairing()
     Paring(data, main_chain, pend, idx_pair);
 
-    std::deque<Dict> sorted_main_chain = FordJohnson(main_chain);
+    std::deque<IdxValue> sorted_main_chain = FordJohnson(main_chain);
 
     if (data.size()%2!=0)
     {
