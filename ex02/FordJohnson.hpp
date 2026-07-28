@@ -22,12 +22,14 @@ class FordJohnson {
         FordJohnson &operator=(const FordJohnson &other);
         ~FordJohnson();
 
+        std::deque<IdxValue> sort(std::deque<IdxValue> const &data);
+
         IdxValue getIdxValueOfMainChain(int unique_idx);
         IdxValue getIdxValueOfPend(int);
         int      getPositionOfMainChain(int unique_idx);
-        void Paring();
-        void SortPend();
-        void Insertion();
+        void pairing();
+        void sortPend();
+        void insertion();
 };
 
 # endif

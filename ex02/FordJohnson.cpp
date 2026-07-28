@@ -80,7 +80,7 @@ int      FordJohnson::getPositionOfMainChain(int unique_idx)
     throw std::exception();
 }
 
-void FordJohnson::Paring()
+void FordJohnson::pairing()
 {
     // data をmain_chain, pend_chainに振り分ける。
     // split data into main_chain and pend keeping the idx of the values
@@ -125,7 +125,7 @@ void FordJohnson::Paring()
     }
 }
 
-void FordJohnson::SortPend()
+void FordJohnson::sortPend()
 {
     // sort pend data by the main_chain idx
    std::deque<IdxValue> sorted_pend;
@@ -177,7 +177,7 @@ void FordJohnson::SortPend()
     // 最初にpendのサイズを変数に格納しておき、
     // 挿入を実行したらその変数をデクリメントする。
 
-static void InsertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &sorted_pend)
+static void insertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &sorted_pend)
 {
     int k = 1;
     // int pend_idx = 1;
@@ -224,18 +224,22 @@ static void InsertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deq
     }
 }
 
-void FordJohnson::Insertion()
+void FordJohnson::insertion()
 {
-    // 1. Insert the pend_element of the smallest element in the main_chain
     int main_chain_key = main_chain_[0].unique_idx;
     int pend_idx = idx_pair_.getPendIdxOf(main_chain_key);
 
     IdxValue pend_elem = getIdxValueOfPend(pend_idx);
     main_chain_.push_front(pend_elem);
-    // 2. Insert by the Jacobsthal
-    // S = [y1, x1, x2, ..., xm]
-    // P = [y2, y3, y4, ..., ym]
-    InsertByJacobsthal(main_chain_, pend_);
+    insertByJacobsthal(main_chain_, pend_);
 }
 
 // meta logic
+std::deque<IdxValue> FordJohnson::sort(std::deque<IdxValue> const &data)
+{
+    pairing();
+    main_chain_ = sort(main_chain_);
+    sortPend();
+    insertion();
+    return (main_chain_);
+}

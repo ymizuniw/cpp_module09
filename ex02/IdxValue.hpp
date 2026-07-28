@@ -4,6 +4,8 @@
 struct IdxValue {
     int unique_idx;
     int value;
+    IdxValue();
+    IdxValue(int unique_idx, int value);
     bool operator<(const IdxValue &other);
 };
 
