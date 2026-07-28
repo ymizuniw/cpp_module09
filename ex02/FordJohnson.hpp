@@ -1,0 +1,29 @@
+# ifndef FORDJOHNSON_HPP
+# define FORDJOHNSON_HPP
+
+# include <deque>
+# include "IdxValue.hpp"
+# include "PairIndex.hpp"
+
+#define REMAINING_ELEM -2
+
+// FordJohnson class receives deque<IdxValue> as an argument, and sort it.
+class FordJohnson {
+    private:
+        std::deque<IdxValue> data_;
+        std::deque<IdxValue> main_chain_;
+        std::deque<IdxValue> pend_;
+        PairIndex idx_pair_;
+    public:
+        FordJohnson();
+        FordJohnson(const FordJohnson &other);
+        FordJohnson &operator=(const FordJohnson &other);
+        ~FordJohnson();
+
+        IdxValue getIdxValueOf(int unique_idx);
+        int      getPositionOf(int unique_idx);
+        void Paring();
+        void Insertion();
+};
+
+# endif
