@@ -163,17 +163,14 @@ int FordJohnson::getSpaceSize(std::deque<IdxValue>::const_iterator &pend_it)
 void FordJohnson::insertByJacobsthal()
 {
     int k = 1;
-    // int pend_idx = 1;
     std::deque<IdxValue>::const_iterator pend_it = pend_.cbegin() + 1; // the second element
     std::deque<IdxValue>::const_iterator pend_end_it = pend_.cend();
 
-    // Insertion range iterator
     std::deque<IdxValue>::const_iterator start_it;
-    // std::deque<IdxValue>::const_iterator end_it;
+    std::deque<IdxValue>::const_iterator end_it;
 
     while (pend_it!=pend_end_it)
     {
-        // int upper_size_floor = 2^k;
         int upper_size_ceiling = (1<<k) - 1;
         int space_size = getSpaceSize(pend_it);
         start_it = pend_it;
@@ -187,13 +184,14 @@ void FordJohnson::insertByJacobsthal()
         }
         if (pend_it!=pend_end_it)
             ++pend_it;
+        end_it = pend_it;
         // main_chain上の上界のイテレータ
         std::deque<IdxValue>::const_iterator main_chain_upper_it = main_chain_.cbegin() + space_size;
-        while (start_it!=pend_it)
+        while (start_it!=end_it)
         {
-            std::deque<IdxValue>::const_iterator it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, (*start_it));
-            main_chain_.insert(it, (*start_it));
-            ++start_it;
+            std::deque<IdxValue>::const_iterator it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, (*end_it));
+            main_chain_.insert(it, (*end_it));
+            --end_it;
         }
         ++k;
     }
