@@ -23,7 +23,8 @@ class FordJohnson {
         void pairing();
         void sortPend();
         void insertion();
-
+        void insertByJacobsthal();
+        int getSpaceSize(std::deque<IdxValue>::const_iterator &pend_it);
     public:
         FordJohnson();
         FordJohnson(std::deque<IdxValue> const &data);

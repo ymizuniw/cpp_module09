@@ -34,13 +34,12 @@ int main(int argc, char *argv[])
             ss >> tmp;
             data.push_back(IdxValue(i-1,tmp));
         }
-        // std::cout << data[0].value << std::endl;
         FordJohnson fj(data);
         std::deque<IdxValue> sorted_data = fj.sort();
-        for (int i=0;i<argc-1;i++)
-        {
-            std::cout << sorted_data[i].value << std::endl;
-        }
+        // for (int i=0;i<argc-1;i++)
+        // {
+        //     std::cout << sorted_data[i].value << std::endl;
+        // }
     } catch(const std::exception &e){
         std::cout << e.what() << std::endl;
     }

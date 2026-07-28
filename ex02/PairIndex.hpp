@@ -19,8 +19,8 @@ class PairIndex {
         ~PairIndex();
 
         void add(int main_chain_idx, int pend_idx);
-        int getPendIdxOf(int main_chain_idx) const;
-        int getMainChainIdxOf(int pend_idx) const;
+        int getSmallIdxOf(int main_chain_idx) const;
+        int getLargeIdxOf(int pend_idx) const;
 };
 
 # endif
