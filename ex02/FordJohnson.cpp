@@ -2,6 +2,11 @@
 
 FordJohnson::FordJohnson(): idx_pair_() {}
 
+FordJohnson::FordJohnson(std::deque<IdxValue> const &data)
+{
+    data_=data;
+}
+
 FordJohnson::FordJohnson(const FordJohnson &other)
 {
     if (this==&other)
@@ -16,7 +21,7 @@ FordJohnson::FordJohnson(const FordJohnson &other)
 FordJohnson &FordJohnson::operator=(const FordJohnson &other)
 {
     if (this==&other)
-        return ;
+        return (*this);
     
     data_=other.data_;
     main_chain_=other.main_chain_;
@@ -177,6 +182,7 @@ void FordJohnson::sortPend()
     // 最初にpendのサイズを変数に格納しておき、
     // 挿入を実行したらその変数をデクリメントする。
 
+# include <iostream>
 static void insertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deque<IdxValue> &sorted_pend)
 {
     int k = 1;
@@ -193,7 +199,7 @@ static void insertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deq
 
     while (pend_it!=pend_end_it)
     {
-        int upper_size_floor = 2^k;
+        // int upper_size_floor = 2^k;
         int upper_size_ceiling = 2^k - 1;
         int space_size = inserted_count * 2;
         start_it = pend_it;
@@ -213,7 +219,8 @@ static void insertByJacobsthal(std::deque<IdxValue> &sorted_main_chain, std::deq
         end_it = pend_it - 1;
 
         // main_chain上の上界のイテレータ
-        std::deque<IdxValue>::const_iterator main_chain_upper_it = sorted_main_chain.begin() - (space_size - 1);
+        std::deque<IdxValue>::const_iterator main_chain_upper_it = sorted_main_chain.cbegin() - (space_size - 1);
+        std::cout << "space_size: " << space_size << std::endl;
         while (start_it!=end_it)
         {
             std::deque<IdxValue>::const_iterator it = std::upper_bound(sorted_main_chain.cbegin(), main_chain_upper_it, (*start_it));
@@ -231,15 +238,53 @@ void FordJohnson::insertion()
 
     IdxValue pend_elem = getIdxValueOfPend(pend_idx);
     main_chain_.push_front(pend_elem);
+    std::cout << "main_chan_[0] " << main_chain_[0].value << std::endl;
+    std::cout << "main_chan_[1] " << main_chain_[1].value << std::endl;
+    if (pend_.size()==1)
+        return ;
+    for (int i = 0;i<int(pend_.size());i++)
+    {
+        std::cout << "pend_[" << i << "] " << pend_[i].value << std::endl;
+    }
     insertByJacobsthal(main_chain_, pend_);
 }
 
+int count = 0;
+# include <iostream>
 // meta logic
-std::deque<IdxValue> FordJohnson::sort(std::deque<IdxValue> const &data)
+std::deque<IdxValue> FordJohnson::sort()
 {
+
+    std::cout << "count:" << count++ << std::endl;
+    
+    // for (int i=0;i<static_cast<int>(data_.size());i++)
+    // {
+    //     std::cout << " data[" << i << "]" << data_[i].value << std::endl;
+    // }
+    
+    if (data_.size()==1)
+    {
+        // std::cout << "data_.size()==1" << std::endl;
+        main_chain_.push_back(data_.back());
+        // std::cout << "data_.back()=="<< main_chain_.back().value << std::endl;
+        // for (int i=0;i<static_cast<int>(main_chain_.size());i++)
+        // {
+        //     std::cout << "main_chain["<<i<<"] " << main_chain_[i].value << std::endl;
+        // }
+        return (main_chain_);
+    }
     pairing();
-    main_chain_ = sort(main_chain_);
+    FordJohnson recursive_fj(main_chain_);
+    // std::cout << "here" << std::endl;
+    main_chain_ = recursive_fj.sort();
+    // for (int i=0;i<static_cast<int>(main_chain_.size());i++)
+    // {
+    //     std::cout << "main_chain["<<i<<"] " << main_chain_[i].value << std::endl;
+    // }
     sortPend();
+
+    // std::cout << pend_[0].value << std::endl;
     insertion();
+    // std::cout << main_chain_[0].value << std::endl;
     return (main_chain_);
 }

@@ -1,0 +1,11 @@
+(lldb) p sorted_main_chain 
+(std::deque<IdxValue> &) 0x000000016fdfe6e8 size=2: {
+  [0] = (unique_idx = 1, value = 1)
+  [1] = (unique_idx = 3, value = 3)
+}
+
+(lldb) p sorted_pend 
+(std::deque<IdxValue> &) 0x000000016fdfe718 size=2: {
+  [0] = (unique_idx = 1, value = 1)
+  [1] = (unique_idx = 1, value = 1)
+}

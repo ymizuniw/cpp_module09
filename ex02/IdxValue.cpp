@@ -4,7 +4,7 @@ IdxValue::IdxValue(): unique_idx(-1), value(-1){}
 
 IdxValue::IdxValue(int unique_idx, int value): unique_idx(unique_idx), value(value){}
 
-bool IdxValue::operator<(const IdxValue &other)
+bool IdxValue::operator<(const IdxValue &other) const
 {
     if (this->value<other.value)
         return (true);

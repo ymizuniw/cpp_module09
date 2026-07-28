@@ -16,13 +16,6 @@ class FordJohnson {
         std::deque<IdxValue> main_chain_;
         std::deque<IdxValue> pend_;
         PairIndex idx_pair_;
-    public:
-        FordJohnson();
-        FordJohnson(const FordJohnson &other);
-        FordJohnson &operator=(const FordJohnson &other);
-        ~FordJohnson();
-
-        std::deque<IdxValue> sort(std::deque<IdxValue> const &data);
 
         IdxValue getIdxValueOfMainChain(int unique_idx);
         IdxValue getIdxValueOfPend(int);
@@ -30,6 +23,14 @@ class FordJohnson {
         void pairing();
         void sortPend();
         void insertion();
+
+    public:
+        FordJohnson();
+        FordJohnson(std::deque<IdxValue> const &data);
+        FordJohnson(const FordJohnson &other);
+        FordJohnson &operator=(const FordJohnson &other);
+        ~FordJohnson();
+        std::deque<IdxValue> sort();
 };
 
 # endif

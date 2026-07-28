@@ -1,5 +1,7 @@
 # include "PairIndex.hpp"
 
+IdxPair::IdxPair(int large_idx, int small_idx): large(large_idx), small(small_idx) {}
+
 PairIndex::PairIndex() {}
 
 PairIndex::PairIndex(const PairIndex &other)
@@ -12,8 +14,9 @@ PairIndex::PairIndex(const PairIndex &other)
 PairIndex &PairIndex::operator=(const PairIndex &other)
 {
     if (this==&other)
-        return ;
+        return (*this);
     pairs_=other.pairs_;
+    return (*this);
 }
 
 PairIndex::~PairIndex(){}

@@ -1,5 +1,6 @@
 # include "FordJohnson.hpp"
 # include <iostream>
+# include <sstream>
 /*
     PROGRAM: PmergeMe
     INPUT:  ./PmergeMe 3 5 9 7 4
@@ -22,23 +23,26 @@ int main(int argc, char *argv[])
         std::cerr << "Usage: " << argv[0] << " <list of integers>" << std::endl;
         return (1);
     }
+    try{
+        std::deque<IdxValue> data;
 
-    int tmp[argc - 1];
-    for (int i = 1; i < argc; ++i)
-    {
-        tmp[i - 1] = 0;
+        for (int i = 1; i < argc; i++)
+        {
+            std::stringstream ss;
+            int tmp;
+            ss << argv[i];
+            ss >> tmp;
+            data.push_back(IdxValue(i-1,tmp));
+        }
+        // std::cout << data[0].value << std::endl;
+        FordJohnson fj(data);
+        std::deque<IdxValue> sorted_data = fj.sort();
+        for (int i=0;i<argc-1;i++)
+        {
+            std::cout << sorted_data[i].value << std::endl;
+        }
+    } catch(const std::exception &e){
+        std::cout << e.what() << std::endl;
     }
-    for (int i = 1; i < argc; ++i)
-    {
-        tmp[i - 1] = std::atoi(argv[i]);
-    }
-
-    std::deque<IdxValue> data;
-    for (int i = 0;i<argc-1;i++)
-    {
-        data.push_back(IdxValue(i,tmp[i]));
-    }
-    FordJohnson fj;
-    std::deque<IdxValue> sorted_data = fj.sort(data);
     return (0);
 }
