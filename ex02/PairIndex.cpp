@@ -27,8 +27,6 @@ void PairIndex::add(int large_idx, int small_idx)
 // this function will be used???
 int  PairIndex::getPendIdxOf(int main_chain_idx) const
 {
-    //    from     std::deque<IdxPair> pairs_;
-    // search the matching pair index of pend
     std::deque<IdxPair>::const_iterator it = pairs_.begin();
     std::deque<IdxPair>::const_iterator end_it = pairs_.end();
 

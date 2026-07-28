@@ -2,6 +2,8 @@
 # define FORDJOHNSON_HPP
 
 # include <deque>
+# include <algorithm>
+
 # include "IdxValue.hpp"
 # include "PairIndex.hpp"
 
@@ -20,9 +22,11 @@ class FordJohnson {
         FordJohnson &operator=(const FordJohnson &other);
         ~FordJohnson();
 
-        IdxValue getIdxValueOf(int unique_idx);
-        int      getPositionOf(int unique_idx);
+        IdxValue getIdxValueOfMainChain(int unique_idx);
+        IdxValue getIdxValueOfPend(int);
+        int      getPositionOfMainChain(int unique_idx);
         void Paring();
+        void SortPend();
         void Insertion();
 };
 
