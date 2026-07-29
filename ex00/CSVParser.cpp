@@ -91,7 +91,7 @@ void CSVParser::parseFile(){
         std::vector<std::string> tokens = split_line(line, delim_);
         if (tokens.size()!=2)
             throw std::runtime_error("DB: Invalid line format: " + std::to_string(line_num));
-        if (fmt_==" | ")
+        if (fmt_.find(' '))
             trim_spaces_from_input(nodes);
         nodes.push_back(tokens);
         line_num++;
