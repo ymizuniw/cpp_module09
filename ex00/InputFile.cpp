@@ -1,18 +1,13 @@
 # include "InputFile.hpp"
 
-    // private:
-    //     std::multimap<Date,float> record_;
-    //     std::string file_name_;
-    //     std::ifstream file_stream_;
-    //     std::vector<Error> errs_;
-
-
 InputFile::InputFile(): CSVParser() {
     
 }
+
 InputFile::InputFile(std::string file_name): CSVParser(), file_name_(file_name){
 
 }
+
 InputFile::InputFile(const InputFile &other){
     if (this==&other) 
         return;
@@ -57,4 +52,3 @@ void InputFile::sortRecord(){
 std::multimap<Date,float> getRecord(){
 
 }
-

@@ -5,25 +5,31 @@
 # include "Date.hpp"
 # include <fstream>
 # include <iostream>
+# include <sstream>
+# include "ParseDate.hpp"
+# include "ParseValue.hpp"
 
 class CSVParser {
     private:
+        std::ifstream file_stream_;
+        bool exception_;
+    protected:
         std::multimap<Date,float> record_;
         std::string file_name_;
-        std::ifstream file_stream_;
-        std::vector<Error> errs_;
         std::string fmt_;
+        char delim_;
     public:
         CSVParser();
-        CSVParser(std::string file_name);
-        CSVParser(std::string file_name, std::vector<Error> errs,std::string fmt);
+        CSVParser(std::string file_name, char delim, bool exception);
+        CSVParser(std::string file_name, std::vector<Error> errs,std::string fmt, char delim, bool exception);
         CSVParser(const CSVParser &other);
         CSVParser &operator=(const CSVParser &other);
         virtual ~CSVParser();
-        virtual void openFile() = 0;
-        virtual void checkFile() = 0;
-        virtual void parseFile() = 0;
-        virtual void sortRecord() = 0;
+        void openFile();
+        void checkFormat();
+        void parseFile();
+        void sortRecord();
+        void setException(bool exception);
         virtual std::multimap<Date,float> getRecord() = 0;
 };
 

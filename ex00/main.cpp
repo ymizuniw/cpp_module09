@@ -34,7 +34,7 @@ void check_fstream_open(std::ifstream &file_stream)
 // https://dexall.co.jp/articles/?p=2187#i-4
 // in case of ",", it works. 
 // in case of " | ", split by '|' and trimming spaces in the first and second substring.
-std::vector<std::string> split_line(std::string &line, const char delim)
+std::vector<std::string> split_line(std::string &line, char delim)
 {
     std::vector<std::string> tokens;
     std::string token;
@@ -89,7 +89,7 @@ void check_split_tokens(std::vector<std::vector<std::string> > &nodes, bool db)
 
 int count = 0;
 
-std::vector<std::vector<std::string> > csv_parser(std::ifstream &file_stream, const char delim, bool db)
+std::vector<std::vector<std::string> > csv_parser(std::ifstream &file_stream, char delim, bool db)
 {
     std::vector<std::vector<std::string> > nodes;
     std::string line;

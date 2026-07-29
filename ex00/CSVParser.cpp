@@ -1,20 +1,20 @@
 # include "CSVParser.hpp"
 
-CSVParser::CSVParser(): errs_(){}
+CSVParser::CSVParser() {}
 
-CSVParser::CSVParser(std::string file_name):file_name_(file_name){}
+CSVParser::CSVParser(std::string file_name, char delim, bool exception):file_name_(file_name), delim_(delim), exception_(exception) {}
 
-CSVParser::CSVParser(std::string file_name, std::vector<Error> errs,std::string fmt): file_name_(file_name), errs_(errs), fmt_(fmt) {}
+CSVParser::CSVParser(std::string file_name, std::vector<Error> errs,std::string fmt, char delim, bool exception): file_name_(file_name), errs_(errs), fmt_(fmt), delim_(delim), exception_(exception) {}
 
-CSVParser::CSVParser(const CSVParser &other){
+CSVParser::CSVParser(const CSVParser &other): exception_(other.exception_){
     if (this==&other)
         return ;
     record_=other.record_;
     file_name_=other.file_name_;
     std::cout << "CSVParser's copy constructor called. This is not for real use." << std::endl;
     // file_stream_=other.file_stream_;
-    errs_=other.errs_;
     fmt_=other.fmt_;
+    delim_=other.delim_;
 }
 
 CSVParser &CSVParser::operator=(const CSVParser &other){
@@ -24,7 +24,65 @@ CSVParser &CSVParser::operator=(const CSVParser &other){
     file_name_=other.file_name_;
     std::cout << "CSVParser's copy constructor called. This is not for real use." << std::endl;
     // file_stream_=other.file_stream_;
-    errs_=other.errs_;
     fmt_=other.fmt_;
     return (*this);
+}
+
+void CSVParser::openFile(){
+    file_stream_.open(file_name_, std::ios_base::in);
+    file_stream_.exceptions(std::ios_base::badbit);
+}
+
+void CSVParser::checkFormat(){
+    std::string line;
+
+    if (std::getline(file_stream_, line))
+    {
+        if (line!=fmt_)
+            throw std::runtime_error("DB: Invalid Format" + line);
+    }
+}
+
+static std::vector<std::string> split_line(std::string &line, char delim)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream iss(line);
+
+    iss.exceptions(std::ios_base::badbit);
+    while (std::getline(iss, token, delim))
+        tokens.push_back(token);
+    return (tokens);
+}
+
+void CSVParser::setException(bool exception)
+{
+    exception_=exception;
+}
+
+void CSVParser::parseFile(){
+    std::vector<std::vector<std::string> > nodes;
+    std::string line;
+    int line_num = 1;
+
+    while (std::getline(file_stream_, line))
+    {
+        std::vector<std::string> tokens = split_line(line, delim_);
+        if (tokens.size()!=2)
+            throw std::runtime_error("DB: Invalid line format: " + std::to_string(line_num));
+        nodes.push_back(tokens);
+        line_num++;
+    }
+
+    std::vector<std::vector<std::string> >::const_iterator it = nodes.cbegin();
+    std::vector<std::vector<std::string> >::const_iterator end_it = nodes.cend();
+
+    line_num = 1;
+    while (it!=end_it)
+    {
+        Error err(0,line_num,"");
+        Date date = parseDate((*it)[0],err);
+        float value = parseValue((*it)[1],err);
+        record_.insert(std::make_pair(date, value));
+    }
 }
