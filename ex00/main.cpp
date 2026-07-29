@@ -9,33 +9,6 @@
     multimapを使用する
 */
 
-// CSV parser abstract class
-
-struct Error
-{
-    int err_num;
-    int line_num;
-    std::string err_msg;
-};
-
-// node for a line(row)
-struct DateValue
-{
-    Error err;
-    std::string date;
-    float val;
-    bool operator<(const DateValue &other) const;
-};
-
-void set_error(Error &err, int err_num, int line_num, std::string err_msg)
-{
-    if (err.err_num!=0)
-        return ;
-    err.err_num = err_num;
-    err.line_num = line_num;
-    err.err_msg = err_msg;
-}
-
 void check_csv_file(std::ifstream &file_stream, std::string format, bool db)
 {
     // check the first line of csv
@@ -374,18 +347,6 @@ float parse_value(std::string const &val, Error &err, bool db)
     return (try_val);
 }
 
-DateValue create_line_node(std::vector<std::string> row, int line_num, bool db)
-{
-    DateValue node;
-
-    node.err.line_num = line_num;
-    node.err.err_num = 0;
-    node.err.err_msg = "";
-    node.date = parse_date(row[0], node.err, db);
-    node.val = parse_value(row[1], node.err, db);
-    return (node);
-}
-
 std::vector<DateValue> parse_data(std::vector<std::vector<std::string> > &node, bool db)
 {
     std::vector<std::vector<std::string> >::const_iterator row_it = node.begin();
@@ -480,17 +441,12 @@ int main(int argc, char *argv[])
     if (argc != 2)
         return (1);
 
-    std::ifstream db_file_stream("data.csv", std::ios_base::in);
     std::ifstream input_file_stream(argv[1], std::ios_base::in);
     
-    db_file_stream.exceptions(std::ios_base::badbit);
     input_file_stream.exceptions(std::ios_base::badbit);
 
     try {
-        check_fstream_open(db_file_stream);
         check_fstream_open(input_file_stream);
-        
-        check_csv_file(db_file_stream,"date,exchange_rate", true); 
         check_csv_file(input_file_stream,"date | value", false);
 
         std::vector<std::vector<std::string> > db_nodes = csv_parser(db_file_stream, ',', true);
