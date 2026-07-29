@@ -57,7 +57,7 @@ bool check_date_range(std::string date, Error &err)
         mm = mm * 10 + (date[i] - '0');
     if (!(1<=mm && mm<=12))
     {
-        err.set_error(err.err_num, err.line_num, "Invalid Date: [Month]: line: " + std::to_string(err.line_num) + ": " + date);
+        err.setError(err.err_num, err.line_num, "Invalid Date: [Month]: line: " + std::to_string(err.line_num) + ": " + date);
         throw std::runtime_error("DB: " + err.err_msg);
     }
     i++;
@@ -66,7 +66,7 @@ bool check_date_range(std::string date, Error &err)
     if (!check_dd_range(dd, mm, yyyy))
    {
         std::cout << "dd: " << dd << " mm: " << mm << " yyyy: " << yyyy << std::endl;
-        err.set_error(err.err_num, err.line_num,"Invalid Date: [Day]: line: " + std::to_string(err.line_num) + ": " + date);
+        err.setError(err.err_num, err.line_num,"Invalid Date: [Day]: line: " + std::to_string(err.line_num) + ": " + date);
         throw std::runtime_error(err.err_msg);
    }
    return (true);
@@ -81,7 +81,7 @@ bool check_date_format(std::string date, Error &err)
 {
     if (date.length() != 10)
     {
-        err.set_error(1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
+        err.setError(1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
         throw std::runtime_error("DB: " + err.err_msg);
     }
     int i=0;
@@ -89,33 +89,33 @@ bool check_date_format(std::string date, Error &err)
     {
         if (!std::isdigit(date[i]))
         {
-            err.set_error(1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
+            err.setError(1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
             throw std::runtime_error("DB: " + err.err_msg);
         }
     }
     if (date[i++]!='-')
     {
-        err.set_error(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
+        err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
         throw std::runtime_error("DB: " + err.err_msg);
     }
     for (;i<7;++i)
     {
         if (!std::isdigit(date[i]))
         {
-            err.set_error(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
+            err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
             throw std::runtime_error("DB: " + err.err_msg);      
         }
     }
     if (date[i++]!='-')
     {
-        err.set_error(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
+        err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
         throw std::runtime_error("DB: " + err.err_msg);
     }
     for (;i<10;++i)
     {
         if (!std::isdigit(date[i]))
         {
-            err.set_error(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
+            err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
             throw std::runtime_error("DB: " + err.err_msg);
         }
     }
