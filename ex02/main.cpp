@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
         }
         FordJohnson fj(data);
         std::deque<IdxValue> sorted_data = fj.sort();
-        // for (int i=0;i<argc-1;i++)
-        // {
-        //     std::cout << sorted_data[i].value << std::endl;
-        // }
+        for (int i=0;i<argc-1;i++)
+        {
+            std::cout << sorted_data[i].value << std::endl;
+        }
     } catch(const std::exception &e){
         std::cout << e.what() << std::endl;
     }

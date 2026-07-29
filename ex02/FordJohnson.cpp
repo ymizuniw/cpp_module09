@@ -89,51 +89,57 @@ void FordJohnson::pairing()
 {
     // data をmain_chain, pend_chainに振り分ける。
     // split data into main_chain and pend keeping the idx of the values
-    size_t size = data_.size()/2;
-    size_t pair_idx = 0;
-    size_t data_idx = 0;
+    IdxValue remain;
+    bool odd = false;
 
-    //元のデータに対するループ
-    while (pair_idx<size)
+    if (data_.size()%2!=0)
+    {
+        remain = data_.back();
+        data_.erase(data_.end()-1);
+        odd = true;
+    }
+
+    std::deque<IdxValue>::const_iterator it = data_.begin();
+    std::deque<IdxValue>::const_iterator end_it = data_.end();
+
+    while (it!=end_it)
     {
         IdxValue large_idx_value;
         IdxValue small_idx_value;
         int large_idx = -1;
         int small_idx = -1;
 
-        // データ要素を比較し、データのオリジナルのインデックスをIdxPair構造体に格納する。
-        if (data_[data_idx]<data_[data_idx+1])
+        if ((*it)<(*(it+1)))
         {
-            large_idx_value = data_[data_idx+1];
-            small_idx_value = data_[data_idx];
-            large_idx = data_[data_idx+1].unique_idx;
-            small_idx = data_[data_idx].unique_idx;
+            large_idx_value = (*(it+1));
+            small_idx_value = (*it);
+            large_idx = (*(it+1)).unique_idx;
+            small_idx = (*it).unique_idx;
         }
         else
         {
-            large_idx_value = data_[data_idx];
-            small_idx_value = data_[data_idx+1];
-            large_idx = data_[data_idx].unique_idx;
-            small_idx = data_[data_idx+1].unique_idx;
+            large_idx_value = (*it);
+            small_idx_value = (*(it+1));
+            large_idx = (*it).unique_idx;
+            small_idx = (*(it+1)).unique_idx;
         }
         main_chain_.push_back(large_idx_value);
         pend_.push_back(small_idx_value);
         idx_pair_.add(large_idx, small_idx);
-        ++pair_idx;
-        data_idx += 2;
+        it += 2;
     }
-    // add remaining one
-    if (data_.size()%2!=0)
+    if (odd)
     {
-        pend_.push_back(data_.back());
-        idx_pair_.add(REMAINING_ELEM, data_.back().unique_idx);
+        pend_.push_back(remain);
+        idx_pair_.add(REMAINING_ELEM, remain.unique_idx);
+        data_.push_back(remain);
     }
 }
 
 void FordJohnson::sortPend()
 {
     // sort pend data by the main_chain idx
-    std::deque<IdxValue> new_pend;
+    std::deque<IdxValue> sorted_pend;
    
     std::deque<IdxValue>::const_iterator it = main_chain_.begin();
     std::deque<IdxValue>::const_iterator end_it = main_chain_.end();
@@ -142,14 +148,14 @@ void FordJohnson::sortPend()
    while (it!=end_it)
    {
     pend_unique_idx = idx_pair_.getSmallIdxOf((*it).unique_idx);
-    new_pend.push_back(getIdxValueOfPend(pend_unique_idx));
+    sorted_pend.push_back(getIdxValueOfPend(pend_unique_idx));
     ++it;
    }
    if (data_.size()%2!=0)
    {
-    new_pend.push_back(pend_.back());
+    sorted_pend.push_back(pend_.back());
    }
-   pend_ = new_pend;
+   pend_ = sorted_pend;
 }
 
 int FordJohnson::getSpaceSize(std::deque<IdxValue>::const_iterator &pend_it)
@@ -163,7 +169,7 @@ int FordJohnson::getSpaceSize(std::deque<IdxValue>::const_iterator &pend_it)
 void FordJohnson::insertByJacobsthal()
 {
     int k = 1;
-    std::deque<IdxValue>::const_iterator pend_it = pend_.cbegin() + 1; // the second element
+    std::deque<IdxValue>::const_iterator pend_it = pend_.cbegin() + 1;
     std::deque<IdxValue>::const_iterator pend_end_it = pend_.cend();
 
     std::deque<IdxValue>::const_iterator start_it;
@@ -171,11 +177,11 @@ void FordJohnson::insertByJacobsthal()
 
     while (pend_it!=pend_end_it)
     {
-        int upper_size_ceiling = (1<<k) - 1;
+        int space_size_ulimit = (1<<(k+1)) - 1;
         int space_size = getSpaceSize(pend_it);
         start_it = pend_it;
 
-        while (space_size<upper_size_ceiling)
+        while (space_size<space_size_ulimit)
         {
             ++pend_it;
             if (pend_it==pend_end_it)
@@ -185,12 +191,12 @@ void FordJohnson::insertByJacobsthal()
         if (pend_it!=pend_end_it)
             ++pend_it;
         end_it = pend_it;
-        // main_chain上の上界のイテレータ
+
         std::deque<IdxValue>::const_iterator main_chain_upper_it = main_chain_.cbegin() + space_size;
         while (start_it!=end_it)
         {
-            std::deque<IdxValue>::const_iterator it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, (*end_it));
-            main_chain_.insert(it, (*end_it));
+            std::deque<IdxValue>::const_iterator upper_bound_it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, *(end_it-1));
+            main_chain_.insert(upper_bound_it, *(end_it-1));
             --end_it;
         }
         ++k;
@@ -200,10 +206,10 @@ void FordJohnson::insertByJacobsthal()
 void FordJohnson::insertion()
 {
     int main_chain_key = main_chain_[0].unique_idx;
-    int pend_idx = idx_pair_.getSmallIdxOf(main_chain_key);
+    int pend_uidx = idx_pair_.getSmallIdxOf(main_chain_key);
 
-    IdxValue pend_elem = getIdxValueOfPend(pend_idx);
-    main_chain_.push_front(pend_elem);
+    IdxValue pend_elem = getIdxValueOfPend(pend_uidx);
+    main_chain_.insert(main_chain_.cbegin(), pend_elem);
     if (pend_.size()==1)
         return ;
     insertByJacobsthal();

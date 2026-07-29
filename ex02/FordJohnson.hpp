@@ -18,7 +18,7 @@ class FordJohnson {
         PairIndex idx_pair_;
 
         IdxValue getIdxValueOfMainChain(int unique_idx);
-        IdxValue getIdxValueOfPend(int);
+        IdxValue getIdxValueOfPend(int unique_idx);
         int      getPositionOfMainChain(int unique_idx);
         void pairing();
         void sortPend();
