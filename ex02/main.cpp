@@ -26,12 +26,15 @@ int main(int argc, char *argv[])
     try{
         std::deque<IdxValue> data;
 
-        for (int i = 1; i < argc; i++)
+        for (size_t i = 1; i < static_cast<size_t>(argc); i++)
         {
-            std::stringstream ss;
             int tmp;
+            std::stringstream ss;
+            ss.exceptions(std::ios::failbit | std::ios::badbit);
             ss << argv[i];
             ss >> tmp;
+            if (tmp<0)
+                throw std::exception();
             data.push_back(IdxValue(i-1,tmp));
         }
         FordJohnson fj(data);

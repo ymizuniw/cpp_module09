@@ -87,8 +87,6 @@ int      FordJohnson::getPositionOfMainChain(int unique_idx)
 
 void FordJohnson::pairing()
 {
-    // data をmain_chain, pend_chainに振り分ける。
-    // split data into main_chain and pend keeping the idx of the values
     IdxValue remain;
     bool odd = false;
 
@@ -138,7 +136,6 @@ void FordJohnson::pairing()
 
 void FordJohnson::sortPend()
 {
-    // sort pend data by the main_chain idx
     std::deque<IdxValue> sorted_pend;
    
     std::deque<IdxValue>::const_iterator it = main_chain_.begin();
