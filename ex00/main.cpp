@@ -3,6 +3,13 @@
 #include <string>
 #include <algorithm>
 #include <sstream>
+#include <map>
+
+/*
+    multimapを使用する
+*/
+
+// CSV parser abstract class
 
 struct Error
 {
@@ -482,7 +489,8 @@ int main(int argc, char *argv[])
     try {
         check_fstream_open(db_file_stream);
         check_fstream_open(input_file_stream);
-        check_csv_file(db_file_stream,"date,exchange_rate", true);
+        
+        check_csv_file(db_file_stream,"date,exchange_rate", true); 
         check_csv_file(input_file_stream,"date | value", false);
 
         std::vector<std::vector<std::string> > db_nodes = csv_parser(db_file_stream, ',', true);
