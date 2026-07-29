@@ -4,7 +4,7 @@ InputFile::InputFile(): CSVParser() {
     
 }
 
-InputFile::InputFile(std::string file_name): CSVParser(), file_name_(file_name){
+InputFile::InputFile(std::string file_name): CSVParser(file_name, '|', false){
 
 }
 
@@ -30,16 +30,6 @@ void InputFile::openFile(){
     file_stream_.exceptions(std::ios_base::badbit);
 }
 
-void InputFile::checkFile(){
-    std::string format = "date | value";
-    std::string line;
-
-    if (std::getline(file_stream_, line))
-    {
-        if (line!=format)
-            throw std::runtime_error("DB: Invalid Format" + line);
-    }
-}
 
 void InputFile::parseFile(){
 

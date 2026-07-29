@@ -60,6 +60,27 @@ void CSVParser::setException(bool exception)
     exception_=exception;
 }
 
+void trim_spaces_from_input(std::vector<std::vector<std::string> > &nodes)
+{
+    std::vector<std::vector<std::string> >::iterator row_it = nodes.begin();
+    std::vector<std::vector<std::string> >::iterator row_end = nodes.end();
+
+    size_t line_num = 2;
+    while (row_it!=row_end)
+    {
+        if ((*row_it)[0].empty() || (*row_it)[1].empty())
+            throw std::runtime_error("Invalid line format");
+        size_t len = (*row_it)[0].length();
+        // date' '|' 'value
+        if ((*row_it)[0][len-1]!=' ' || (*row_it)[1][0]!=' ')
+          throw std::runtime_error("Invalid line format: " + std::to_string(line_num));
+        (*row_it)[0].erase(len-1, 1);
+        (*row_it)[1].erase(0,1);
+        ++line_num;
+        ++row_it;
+    }
+}
+
 void CSVParser::parseFile(){
     std::vector<std::vector<std::string> > nodes;
     std::string line;
@@ -70,6 +91,8 @@ void CSVParser::parseFile(){
         std::vector<std::string> tokens = split_line(line, delim_);
         if (tokens.size()!=2)
             throw std::runtime_error("DB: Invalid line format: " + std::to_string(line_num));
+        if (fmt_==" | ")
+            trim_spaces_from_input(nodes);
         nodes.push_back(tokens);
         line_num++;
     }

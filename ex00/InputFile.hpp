@@ -3,12 +3,6 @@
 # include <fstream>
 
 class InputFile: public CSVParser {
-    private:
-        std::multimap<Date,float> record_;
-        std::string file_name_;
-        std::ifstream file_stream_;
-        std::vector<Error> errs_;
-        std::string fmt_;
     public:
         InputFile();
         InputFile(std::string file_name);
