@@ -201,11 +201,12 @@ void FordJohnson<Container>::insertByJacobsthal()
             ++pend_it;
         end_it = pend_it;
 
-        typename Container<IdxValue>::const_iterator main_chain_upper_it = std::next(main_chain_.cbegin(),space_size);
         while (start_it!=end_it)
         {
+            typename Container<IdxValue>::const_iterator main_chain_upper_it = std::next(main_chain_.cbegin(),space_size);
             typename Container<IdxValue>::const_iterator upper_bound_it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, *std::prev(end_it));
             main_chain_.insert(upper_bound_it, *std::prev(end_it));
+            ++space_size;
             --end_it;
         }
         ++k;
