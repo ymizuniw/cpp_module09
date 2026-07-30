@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
                 throw std::exception();
             data.push_back(IdxValue(i-1,tmp));
         }
-        FordJohnson fj(data);
+        FordJohnson<std::deque<IdxValue> > fj(data);
         std::deque<IdxValue> sorted_data = fj.sort();
         for (int i=0;i<argc-1;i++)
         {

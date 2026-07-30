@@ -1,13 +1,16 @@
 # include "FordJohnson.hpp"
 
-FordJohnson::FordJohnson(): idx_pair_() {}
+template<typename Container>
+FordJohnson<Container>::FordJohnson(): idx_pair_() {}
 
-FordJohnson::FordJohnson(std::deque<IdxValue> const &data)
+template<typename Container>
+FordJohnson<Container>::FordJohnson(Container const &data)
 {
     data_=data;
 }
 
-FordJohnson::FordJohnson(const FordJohnson &other)
+template<typename Container>
+FordJohnson<Container>::FordJohnson(const FordJohnson &other)
 {
     if (this==&other)
         return ;
@@ -18,7 +21,8 @@ FordJohnson::FordJohnson(const FordJohnson &other)
     idx_pair_=other.idx_pair_;
 }
 
-FordJohnson &FordJohnson::operator=(const FordJohnson &other)
+template<typename Container>
+FordJohnson<Container> &FordJohnson<Container>::operator=(const FordJohnson<Container> &other)
 {
     if (this==&other)
         return (*this);
@@ -31,13 +35,15 @@ FordJohnson &FordJohnson::operator=(const FordJohnson &other)
     return (*this);
 }
 
-FordJohnson::~FordJohnson() {}
+template<typename Container>
+FordJohnson<Container>::~FordJohnson() {}
 
 // In main_chain, search the IdxValue object its idx variable has unique_idx given as an argument.
-IdxValue FordJohnson::getIdxValueOfMainChain(int unique_idx)
+template<typename Container>
+IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
 {
-    std::deque<IdxValue>::const_iterator it = main_chain_.begin();
-    std::deque<IdxValue>::const_iterator end_it = main_chain_.end();
+    typename Container::const_iterator it = main_chain_.begin();
+    typename Container::const_iterator end_it = main_chain_.end();
 
     while (it!=end_it)
     {
@@ -51,10 +57,11 @@ IdxValue FordJohnson::getIdxValueOfMainChain(int unique_idx)
 }
 
 // In pend, search the IdxValue object its idx variable has unique_idx given as an argument.
-IdxValue FordJohnson::getIdxValueOfPend(int unique_idx)
+template<typename Container>
+IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
 {
-    std::deque<IdxValue>::const_iterator it = pend_.begin();
-    std::deque<IdxValue>::const_iterator end_it = pend_.end();
+    typename Container::const_iterator it = pend_.begin();
+    typename Container::const_iterator end_it = pend_.end();
 
     while (it!=end_it)
     {
@@ -67,10 +74,11 @@ IdxValue FordJohnson::getIdxValueOfPend(int unique_idx)
     throw std::exception();
 }
 
-int      FordJohnson::getPositionOfMainChain(int unique_idx)
+template<typename Container>
+int      FordJohnson<Container>::getPositionOfMainChain(int unique_idx)
 {
-    std::deque<IdxValue>::const_iterator it = main_chain_.begin();
-    std::deque<IdxValue>::const_iterator end_it = main_chain_.end();
+    typename Container::const_iterator it = main_chain_.begin();
+    typename Container::const_iterator end_it = main_chain_.end();
 
     size_t pos = 0;
     while (it!=end_it)
@@ -85,7 +93,8 @@ int      FordJohnson::getPositionOfMainChain(int unique_idx)
     throw std::exception();
 }
 
-void FordJohnson::pairing()
+template<typename Container>
+void FordJohnson<Container>::pairing()
 {
     IdxValue remain;
     bool odd = false;
@@ -97,8 +106,8 @@ void FordJohnson::pairing()
         odd = true;
     }
 
-    std::deque<IdxValue>::const_iterator it = data_.begin();
-    std::deque<IdxValue>::const_iterator end_it = data_.end();
+    typename Container::const_iterator it = data_.begin();
+    typename Container::const_iterator end_it = data_.end();
 
     while (it!=end_it)
     {
@@ -134,12 +143,13 @@ void FordJohnson::pairing()
     }
 }
 
-void FordJohnson::sortPend()
+template<typename Container>
+void FordJohnson<Container>::sortPend()
 {
     std::deque<IdxValue> sorted_pend;
    
-    std::deque<IdxValue>::const_iterator it = main_chain_.begin();
-    std::deque<IdxValue>::const_iterator end_it = main_chain_.end();
+    typename Container::const_iterator it = main_chain_.begin();
+    typename Container::const_iterator end_it = main_chain_.end();
    int pend_unique_idx;
 
    while (it!=end_it)
@@ -155,7 +165,8 @@ void FordJohnson::sortPend()
    pend_ = sorted_pend;
 }
 
-int FordJohnson::getSpaceSize(std::deque<IdxValue>::const_iterator &pend_it)
+template<typename Container>
+int FordJohnson<Container>::getSpaceSize(typename Container::const_iterator &pend_it)
 {
     int pos = idx_pair_.getLargeIdxOf((*pend_it).unique_idx);
     if (pos==REMAINING_ELEM)
@@ -163,14 +174,15 @@ int FordJohnson::getSpaceSize(std::deque<IdxValue>::const_iterator &pend_it)
     return (getPositionOfMainChain(pos)+1);
 }
 
-void FordJohnson::insertByJacobsthal()
+template<typename Container>
+void FordJohnson<Container>::insertByJacobsthal()
 {
     int k = 1;
-    std::deque<IdxValue>::const_iterator pend_it = pend_.cbegin() + 1;
-    std::deque<IdxValue>::const_iterator pend_end_it = pend_.cend();
+    typename Container::const_iterator pend_it = pend_.cbegin() + 1;
+    typename Container::const_iterator pend_end_it = pend_.cend();
 
-    std::deque<IdxValue>::const_iterator start_it;
-    std::deque<IdxValue>::const_iterator end_it;
+    typename Container::const_iterator start_it;
+    typename Container::const_iterator end_it;
 
     while (pend_it!=pend_end_it)
     {
@@ -189,10 +201,10 @@ void FordJohnson::insertByJacobsthal()
             ++pend_it;
         end_it = pend_it;
 
-        std::deque<IdxValue>::const_iterator main_chain_upper_it = main_chain_.cbegin() + space_size;
+        typename Container::const_iterator main_chain_upper_it = main_chain_.cbegin() + space_size;
         while (start_it!=end_it)
         {
-            std::deque<IdxValue>::const_iterator upper_bound_it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, *(end_it-1));
+            typename Container::const_iterator upper_bound_it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, *(end_it-1));
             main_chain_.insert(upper_bound_it, *(end_it-1));
             --end_it;
         }
@@ -200,7 +212,8 @@ void FordJohnson::insertByJacobsthal()
     }
 }
 
-void FordJohnson::insertion()
+template<typename Container>
+void FordJohnson<Container>::insertion()
 {
     int main_chain_key = main_chain_[0].unique_idx;
     int pend_uidx = idx_pair_.getSmallIdxOf(main_chain_key);
@@ -212,7 +225,8 @@ void FordJohnson::insertion()
     insertByJacobsthal();
 }
 
-std::deque<IdxValue> FordJohnson::sort()
+template<typename Container>
+Container FordJohnson<Container>::sort()
 {
     if (data_.size()==1)
     {
