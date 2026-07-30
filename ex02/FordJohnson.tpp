@@ -102,7 +102,7 @@ void FordJohnson<Container>::pairing()
     if (data_.size()%2!=0)
     {
         remain = data_.back();
-        data_.erase(data_.end()-1);
+        data_.erase(std::prev(data_.end()));
         odd = true;
     }
 
@@ -116,24 +116,24 @@ void FordJohnson<Container>::pairing()
         int large_idx = -1;
         int small_idx = -1;
 
-        if ((*it)<(*(it+1)))
+        if ((*it)<(*std::next(it)))
         {
-            large_idx_value = (*(it+1));
+            large_idx_value = (*std::next(it));
             small_idx_value = (*it);
-            large_idx = (*(it+1)).unique_idx;
+            large_idx = (*std::next(it)).unique_idx;
             small_idx = (*it).unique_idx;
         }
         else
         {
             large_idx_value = (*it);
-            small_idx_value = (*(it+1));
+            small_idx_value = (*std::next(it));
             large_idx = (*it).unique_idx;
-            small_idx = (*(it+1)).unique_idx;
+            small_idx = (*std::next(it)).unique_idx;
         }
         main_chain_.push_back(large_idx_value);
         pend_.push_back(small_idx_value);
         idx_pair_.add(large_idx, small_idx);
-        it += 2;
+        it = std::next(it,2);
     }
     if (odd)
     {
@@ -146,7 +146,7 @@ void FordJohnson<Container>::pairing()
 template<typename Container>
 void FordJohnson<Container>::sortPend()
 {
-    std::deque<IdxValue> sorted_pend;
+    Container sorted_pend;
    
     typename Container::const_iterator it = main_chain_.begin();
     typename Container::const_iterator end_it = main_chain_.end();
@@ -178,7 +178,7 @@ template<typename Container>
 void FordJohnson<Container>::insertByJacobsthal()
 {
     int k = 1;
-    typename Container::const_iterator pend_it = pend_.cbegin() + 1;
+    typename Container::const_iterator pend_it = std::next(pend_.cbegin());
     typename Container::const_iterator pend_end_it = pend_.cend();
 
     typename Container::const_iterator start_it;
@@ -201,11 +201,11 @@ void FordJohnson<Container>::insertByJacobsthal()
             ++pend_it;
         end_it = pend_it;
 
-        typename Container::const_iterator main_chain_upper_it = main_chain_.cbegin() + space_size;
+        typename Container::const_iterator main_chain_upper_it = std::next(main_chain_.cbegin(),space_size);
         while (start_it!=end_it)
         {
-            typename Container::const_iterator upper_bound_it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, *(end_it-1));
-            main_chain_.insert(upper_bound_it, *(end_it-1));
+            typename Container::const_iterator upper_bound_it = std::upper_bound(main_chain_.cbegin(), main_chain_upper_it, *std::prev(end_it));
+            main_chain_.insert(upper_bound_it, *std::prev(end_it));
             --end_it;
         }
         ++k;
@@ -215,7 +215,7 @@ void FordJohnson<Container>::insertByJacobsthal()
 template<typename Container>
 void FordJohnson<Container>::insertion()
 {
-    int main_chain_key = main_chain_[0].unique_idx;
+    int main_chain_key = main_chain_.front().unique_idx;
     int pend_uidx = idx_pair_.getSmallIdxOf(main_chain_key);
 
     IdxValue pend_elem = getIdxValueOfPend(pend_uidx);
