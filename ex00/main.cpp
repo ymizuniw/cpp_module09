@@ -4,6 +4,9 @@
 #include <algorithm>
 #include <sstream>
 #include <map>
+#include "DBFile.hpp"
+#include "InputFile.hpp"
+#include "Date.hpp"
 
 /*
     multimapを使用する
@@ -24,73 +27,65 @@
     ・保有量とレートを掛け算して値を算出する必要があるため、日付は文字列で良いが、値はfloatで保存する必要がある。
 */
 
-std::vector<DateValue> generate_date_reference(std::vector<DateValue> const &db_data, std::vector<DateValue> const &input_data)
+// search the exact or lower Date for the value-rate matching
+std::multimap<Date, float> generateDateReference(std::multimap<Date, float> const &db, std::multimap<Date, float> const &input)
 {
-    std::vector<DateValue> ref_data;
+    std::multimap<Date, float> ref_data;
 
-    std::vector<DateValue>::const_iterator db_start = db_data.begin();
-    std::vector<DateValue>::const_iterator db_end = db_data.end();
-    std::vector<DateValue>::const_iterator input_it = input_data.begin();
-    std::vector<DateValue>::const_iterator input_end = input_data.end();
-    std::vector<DateValue>::const_iterator target_it;
+    std::multimap<Date, float>::const_iterator db_start = db.begin();
+    std::multimap<Date, float>::const_iterator db_end = db.end();
+    std::multimap<Date, float>::const_iterator input_it = input.begin();
+    std::multimap<Date, float>::const_iterator input_end = input.end();
+    std::multimap<Date, float>::const_iterator target_it;
     
     while (input_it!=input_end)
     {
-        DateValue new_date;
-
-        if ((*input_it).err.err_num!=0)
+        Date new_date;
+        if ((*input_it).first.getError().err_num!=0)
         {
-            new_date = (*input_it);
-            ref_data.push_back(new_date);
+            ref_data.insert(std::make_pair((*input_it).first, (*input_it).second));
+            ++input_it;
+            continue;
+        }
+        if (*target_it<*db_start)
+        {
+            //not found
+            new_date = (*input_it).first;
+            new_date.setError(2, new_date.getError().line_num, "Not Found [Date]: line: " + std::to_string(new_date.getError().line_num) + " : " + new_date.to_string());
+            ref_data.insert(std::make_pair(new_date, (*input_it).second));
             ++input_it;
             continue;
         }
         target_it = std::lower_bound(db_start, db_end, *input_it);
-        if (target_it==db_end)
-        {
-            //not found
-            new_date = (*input_it);
-            setError(new_date.err, 2, new_date.err.line_num, "Not Found [Date]: line: " + std::to_string(new_date.err.line_num) + " : " + new_date.date);
-            ref_data.push_back(new_date);
-            ++input_it;
-            continue;
-        }
+        --target_it;
+
+        float new_val = 0.f;
+        if (new_date.getError().err_num==0)
+            new_val = (*target_it).second * (*input_it).second;
         else
-        {
-            new_date.date = (*target_it).date;
-            new_date.err = (*target_it).err;
-            if (new_date.err.err_num==0)
-                new_date.val = (*target_it).val * (*input_it).val;
-            else
-                new_date.val = 0.f;
-        }
-        ref_data.push_back(new_date);
+            new_val = 0.f;
+        std::pair<Date, float> pair = std::make_pair((*target_it).first, new_val);
+        ref_data.insert(pair);
         ++input_it;
     }
     return (ref_data);
 }
 
-// bool operator<(const DateValue &other) const; to compare DateValue struct by Date
-bool DateValue::operator<(const DateValue &other) const
-{
-    return (this->date < other.date);
-}
-
 // error handling based on the error status of each nodes are needed.
-void print_data(std::vector<DateValue> &data)
+void print_data(std::multimap<Date, float> data)
 {
-    std::vector<DateValue>::iterator it = data.begin();
-    std::vector<DateValue>::iterator end_it = data.end();
+    std::multimap<Date,float>::const_iterator it = data.cbegin();
+    std::multimap<Date,float>::const_iterator end_it = data.cend();
 
     while (it!=end_it)
     {
-        if ((*it).err.err_num!=0)
+        if ((*it).first.getError().err_num!=0)
         {
-            std::cout << (*it).err.err_msg << std::endl;
+            std::cout << (*it).first.getError().err_msg << std::endl;
             ++it;
             continue;
         }
-        std::cout << (*it).date + " => " + std::to_string((*it).val) << std::endl;
+        std::cout << (*it).first.to_string() + " => " + std::to_string((*it).second) << std::endl;
         ++it;
     }
 }
@@ -99,26 +94,20 @@ int main(int argc, char *argv[])
 {
     if (argc != 2)
         return (1);
-
-    std::ifstream input_file_stream(argv[1], std::ios_base::in);
     
-    input_file_stream.exceptions(std::ios_base::badbit);
-
     try {
-        check_fstream_open(input_file_stream);
-        check_csv_file(input_file_stream,"date | value", false);
+        DBFile db("data.csv");
+        db.openFile();
+        db.checkFormat();
+        db.parseFile();
 
-        std::vector<std::vector<std::string> > db_nodes = csv_parser(db_file_stream, ',', true);
-        std::vector<std::vector<std::string> > input_nodes = csv_parser(input_file_stream, '|', false);
-        trim_spaces_from_input(input_nodes);
+        InputFile input(argv[1]);
+        input.openFile();
+        input.checkFormat();
+        input.parseFile();
 
-        std::vector<DateValue> db_data = parse_data(db_nodes, true);
-        std::vector<DateValue> input_data = parse_data(input_nodes, false);
-
-        std::sort(db_data.begin(), db_data.end());
-        std::sort(input_data.begin(), input_data.end());
-        std::vector<DateValue> referenced_data = generate_date_reference(db_data, input_data);
-        print_data(referenced_data);
+        std::multimap<Date, float> ref = generateDateReference(db.getRecord(), input.getRecord());
+        print_data(ref);
     } catch(std::exception &e){
         std::cout << e.what() << std::endl;
         return (1);

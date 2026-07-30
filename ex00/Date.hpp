@@ -16,6 +16,9 @@ class Date {
         Date &operator=(const Date &other);
         bool operator<(const Date &rhs) const;
         ~Date();
+        Error getError() const;
+        void setError(int err_num, int line_num, std::string err_msg);
+        std::string to_string() const;
 };
 
 # endif
