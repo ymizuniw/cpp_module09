@@ -6,11 +6,11 @@ Error::Error(): err_num(-1), line_num(-1), err_msg("")
 Error::Error(int err_num, int line_num, std::string err_msg): err_num(err_num), line_num(line_num), err_msg(err_msg)
 {}
 
-void setError(Error &err, int err_num, int line_num, std::string err_msg)
+void Error::setError(int err_num, int line_num, std::string err_msg)
 {
-    if (err.err_num!=0)
+    if (this->err_num!=0)
         return ;
-    err.err_num = err_num;
-    err.line_num = line_num;
-    err.err_msg = err_msg;
+    this->err_num = err_num;
+    this->line_num = line_num;
+    this->err_msg = err_msg;
 }

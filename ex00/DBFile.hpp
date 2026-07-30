@@ -12,7 +12,7 @@ class DBFile : public CSVParser {
         DBFile &operator=(const DBFile &other);
         ~DBFile();
         void openFile();
-        void checkFile();
+        void checkFormat();
         void parseFile();
         void sortRecord();
         std::multimap<Date,float> getRecord();

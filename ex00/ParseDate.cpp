@@ -25,18 +25,18 @@ bool check_dd_range(int dd, int mm, int yyyy)
         if (mm==thirty_first[idx])
         {
             if (!(1<=dd && dd<=31))
-                return (false);  
+                return (false);
             return (true);
         }
     }
     for (int idx=0;thirty[idx]!=-1;++idx)
     {
-        if (mm==thirty_first[idx])
+        if (mm==thirty[idx])
         {
             if (!(1<=dd && dd<=30))
-                return (false);  
+                return (false);
             return (true);
-        }  
+        }
     }
     return (true);
 }
@@ -51,25 +51,27 @@ bool check_date_range(std::string date, Error &err)
     for (;i<4;++i)
         yyyy = yyyy*10 + (date[i] - '0');
     if (!(1900<yyyy && yyyy<=2030))
-        throw std::runtime_error("DB: Invalid Date: [Year]: line: " + std::to_string(err.line_num) + ": " + date);
+    {
+        err.setError(1, err.line_num, "Invalid Date: [Year]: line: " + std::to_string(err.line_num) + ": " + date);
+        return (false);
+    }
     i++;
     for (;i<7;++i)
         mm = mm * 10 + (date[i] - '0');
     if (!(1<=mm && mm<=12))
     {
-        err.setError(err.err_num, err.line_num, "Invalid Date: [Month]: line: " + std::to_string(err.line_num) + ": " + date);
-        throw std::runtime_error("DB: " + err.err_msg);
+        err.setError(1, err.line_num, "Invalid Date: [Month]: line: " + std::to_string(err.line_num) + ": " + date);
+        return (false);
     }
     i++;
     for (;i<10;++i)
         dd = dd * 10 + (date[i] - '0');
     if (!check_dd_range(dd, mm, yyyy))
-   {
-        std::cout << "dd: " << dd << " mm: " << mm << " yyyy: " << yyyy << std::endl;
-        err.setError(err.err_num, err.line_num,"Invalid Date: [Day]: line: " + std::to_string(err.line_num) + ": " + date);
-        throw std::runtime_error(err.err_msg);
-   }
-   return (true);
+    {
+        err.setError(1, err.line_num, "Invalid Date: [Day]: line: " + std::to_string(err.line_num) + ": " + date);
+        return (false);
+    }
+    return (true);
 }
 
 bool check_date_value(std::string const row_value, Error &err)
@@ -82,7 +84,7 @@ bool check_date_format(std::string date, Error &err)
     if (date.length() != 10)
     {
         err.setError(1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
-        throw std::runtime_error("DB: " + err.err_msg);
+        return (false);
     }
     int i=0;
     for (;i<4;++i)
@@ -90,33 +92,33 @@ bool check_date_format(std::string date, Error &err)
         if (!std::isdigit(date[i]))
         {
             err.setError(1, err.line_num, "Invalid Date: [Format]: line: " + std::to_string(err.line_num) + ": " + date);
-            throw std::runtime_error("DB: " + err.err_msg);
+            return (false);
         }
     }
     if (date[i++]!='-')
     {
         err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
-        throw std::runtime_error("DB: " + err.err_msg);
+        return (false);
     }
     for (;i<7;++i)
     {
         if (!std::isdigit(date[i]))
         {
             err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
-            throw std::runtime_error("DB: " + err.err_msg);      
+            return (false);
         }
     }
     if (date[i++]!='-')
     {
         err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
-        throw std::runtime_error("DB: " + err.err_msg);
+        return (false);
     }
     for (;i<10;++i)
     {
         if (!std::isdigit(date[i]))
         {
             err.setError(1, err.line_num, "Invalid [Format]: line: " + std::to_string(err.line_num) + ": " + date);
-            throw std::runtime_error("DB: " + err.err_msg);
+            return (false);
         }
     }
     return (true);
@@ -126,7 +128,8 @@ Date parseDate(std::string const &s, Error &err)
 {
     if (!check_date_format(s, err))
         return (Date(-1,-1,-1, err));
-    check_date_value(s, err);
+    if (!check_date_value(s, err))
+        return (Date(-1,-1,-1, err));
     // 2022-03-29
     int year = 0;
     int month = 0;
@@ -147,6 +150,7 @@ Date parseDate(std::string const &s, Error &err)
     while (i<10)
     {
         day = day*10 + (s[i]-'0');
+        i++;
     }
     return (Date(day, month, year, err));
 }

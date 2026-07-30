@@ -10,8 +10,8 @@ class InputFile: public CSVParser {
         InputFile &operator=(const InputFile &other);
         ~InputFile();
         void openFile();
-        void checkFile();
+        void checkFormat();
         void parseFile();
-        void sortRecord(); 
+        void sortRecord();
         std::multimap<Date,float> getRecord();
 };

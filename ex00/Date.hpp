@@ -14,7 +14,7 @@ class Date {
         Date(int day, int month, int year, Error &err);
         Date(const Date &other);
         Date &operator=(const Date &other);
-        bool operator<(const Date &rhs);
+        bool operator<(const Date &rhs) const;
         ~Date();
 };
 
