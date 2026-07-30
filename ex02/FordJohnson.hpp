@@ -9,7 +9,7 @@
 
 #define REMAINING_ELEM -2
 
-template<typename Container = std::deque<IdxValue> >
+template<typename Container>
 class FordJohnson {
     private:
         Container data_;
