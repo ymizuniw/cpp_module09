@@ -31,7 +31,7 @@ void DBFile::checkFormat(){
 
 void DBFile::parseFile(){
     std::string line;
-    int line_num = 1;
+    int line_num = 2;
 
     while (std::getline(file_stream_, line))
     {

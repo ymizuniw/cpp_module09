@@ -39,7 +39,7 @@ void InputFile::checkFormat(){
 
 void InputFile::parseFile(){
     std::string line;
-    int line_num = 1;
+    int line_num = 2;
 
     while (std::getline(file_stream_, line))
     {
@@ -64,10 +64,10 @@ void InputFile::parseFile(){
         Error err(0, line_num, "");
         Date date = parseDate(tokens[0], err);
         float value = parseValue(tokens[1], err);
-        if (err.err_num!=0)
-            std::cout << err.err_msg << std::endl;
-        else
-            record_.insert(std::make_pair(date, value));
+        if (err.err_msg.find("Invalid Value: Not a Positive: line: "))
+            std::cout << "Positive value validation: " << std::endl;
+        date.setError(err.err_num, err.line_num, err.err_msg);
+        record_.insert(std::make_pair(date, value));
         line_num++;
     }
 }

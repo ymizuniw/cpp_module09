@@ -40,32 +40,39 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
     
     while (input_it!=input_end)
     {
-        Date new_date;
-        if ((*input_it).first.getError().err_num!=0)
-        {
-            ref_data.insert(std::make_pair((*input_it).first, (*input_it).second));
-            ++input_it;
-            continue;
-        }
-        if (*target_it<*db_start)
-        {
-            //not found
-            new_date = (*input_it).first;
-            new_date.setError(2, new_date.getError().line_num, "Not Found [Date]: line: " + std::to_string(new_date.getError().line_num) + " : " + new_date.to_string());
-            ref_data.insert(std::make_pair(new_date, (*input_it).second));
-            ++input_it;
-            continue;
-        }
-        target_it = std::lower_bound(db_start, db_end, *input_it);
-        --target_it;
+        Date input_date = (*input_it).first;
+        float input_value = (*input_it).second;
 
+        // input_date hass error
+        if (input_date.getError().err_num!=0)
+        {
+            ref_data.insert(std::make_pair(input_date, input_value));
+            ++input_it;
+            continue;
+        }
+        // no date lower than or equal to input_date
+        if (input_date<(*db_start).first)
+        {
+            input_date.setError(2, input_date.getError().line_num, "Not Found [Date]: line: " + std::to_string(input_date.getError().line_num) + " : " + input_date.to_string());
+            ref_data.insert(std::make_pair(input_date, input_value));
+            ++input_it;
+            continue;
+        }
+        // exact match iterator of input_date and db date
+        target_it = db.find(input_date);
+        // if no exact match found, get the iterator of db date lower than or equal to input_date
+        if (target_it==db_end)
+        {
+            target_it = std::lower_bound(db_start, db_end, *input_it);
+            --target_it;
+        }
+
+        float target_value = (*target_it).second;
         float new_val = 0.f;
-        if (new_date.getError().err_num==0)
-            new_val = (*target_it).second * (*input_it).second;
-        else
-            new_val = 0.f;
-        std::pair<Date, float> pair = std::make_pair((*target_it).first, new_val);
-        ref_data.insert(pair);
+
+        if (input_date.getError().err_num==0)
+            new_val = target_value * input_value;
+        ref_data.insert(std::make_pair(input_date, new_val));
         ++input_it;
     }
     return (ref_data);

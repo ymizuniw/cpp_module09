@@ -50,7 +50,7 @@ bool check_date_range(std::string date, Error &err)
     int i = 0;
     for (;i<4;++i)
         yyyy = yyyy*10 + (date[i] - '0');
-    if (!(1900<yyyy && yyyy<=2030))
+    if (!(1900<yyyy && yyyy<=2100))
     {
         err.setError(1, err.line_num, "Invalid Date: [Year]: line: " + std::to_string(err.line_num) + ": " + date);
         return (false);

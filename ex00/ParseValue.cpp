@@ -3,16 +3,16 @@
 
 static float try_parse_value(std::string const &val, Error &err)
 {
-    float try_val = 0.0;
-    std::stringstream ss(val);
+    float try_val;
+    std::stringstream ss;
+    ss << val;
     ss >> try_val;
     if (ss.fail())
-    {
         err.setError(1, err.line_num, "Invalid Value: line: " + std::to_string(err.line_num) + " : " + val);
-        return (0.f);
-    }
     return (try_val);
 }
+
+# include <iostream>
 
 float parseValue(std::string const &val, Error &err)
 {
