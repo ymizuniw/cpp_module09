@@ -3,19 +3,20 @@
 
 # include <deque>
 # include <algorithm>
+# include <memory>
 
 # include "IdxValue.hpp"
 # include "PairIndex.hpp"
 
 #define REMAINING_ELEM -2
 
-template<typename Container>
+template<template<typename T, typename Allocator = std::allocator<T> > class Container>
 class FordJohnson {
     private:
-        Container data_;
-        Container main_chain_;
-        Container pend_;
-        PairIndex idx_pair_;
+        Container<IdxValue> data_;
+        Container<IdxValue> main_chain_;
+        Container<IdxValue> pend_;
+        PairIndex<Container> idx_pair_;
 
         IdxValue getIdxValueOfMainChain(int unique_idx);
         IdxValue getIdxValueOfPend(int unique_idx);
@@ -24,14 +25,14 @@ class FordJohnson {
         void sortPend();
         void insertion();
         void insertByJacobsthal();
-        int getSpaceSize(typename Container::const_iterator &pend_it);
+        int getSpaceSize(typename Container<IdxValue>::const_iterator &pend_it);
     public:
         FordJohnson();
-        FordJohnson(Container const &data);
+        FordJohnson(Container<IdxValue> const &data);
         FordJohnson(const FordJohnson &other);
         FordJohnson &operator=(const FordJohnson &other);
         ~FordJohnson();
-        Container sort();
+        Container<IdxValue> sort();
 };
 
 # include "FordJohnson.tpp"

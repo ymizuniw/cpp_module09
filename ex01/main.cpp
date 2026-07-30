@@ -1,8 +1,6 @@
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <algorithm>
-#include <sstream>
+#include <stack>
 
 /*
     RPN: Reverse Polish Notation
@@ -21,7 +19,10 @@
 int main(int argc, char *argv[])
 {
     if (argc != 2)
+    {
+        std::cerr << "Error: wrong number of arguments" << std::endl;
         return (1);
+    }
 
     std::string input = argv[1];
     size_t i = 0;
@@ -31,15 +32,13 @@ int main(int argc, char *argv[])
     {
         if (std::isdigit(input[i]))
         {
-            std::cout << "number: " << input[i] << std::endl;
-            rpn_stack.push(input[i]-'0'); // convert char to int
+            rpn_stack.push(input[i]-'0');
         }
         else if (input[i]=='+' || input[i]=='-' || input[i]=='*' || input[i]=='/')
         {
-            std::cout << "operator: " << input[i] << std::endl;
             if (rpn_stack.size()<2)
             {
-                std::cout << "Error: Not enough operands for operator: " << input[i] << std::endl;
+                std::cerr << "Error: Not enough operands for operator: " << input[i] << std::endl;
                 return (1);
             }
             int rh = rpn_stack.top();
@@ -61,7 +60,7 @@ int main(int argc, char *argv[])
                 case '/':
                     if (rh == 0)
                     {
-                        std::cout << "Error: Division by zero" << std::endl;
+                        std::cerr << "Error: Division by zero" << std::endl;
                         return (1);
                     }
                     result = lh / rh;
@@ -75,16 +74,16 @@ int main(int argc, char *argv[])
         }
         else
         {
-            std::cout << "Invalid character: " << input[i] << std::endl;
+            std::cerr << "Invalid character: " << input[i] << std::endl;
             return (1);
         }
         ++i;
     }
     if (rpn_stack.size() != 1)
     {
-        std::cout << "Error: Invalid expression" << std::endl;
+        std::cerr << "Error: Invalid expression" << std::endl;
         return (1);
     }
-    std::cout << "Result: " << rpn_stack.top() << std::endl;
+    std::cout << rpn_stack.top() << std::endl;
     return(0);
 }

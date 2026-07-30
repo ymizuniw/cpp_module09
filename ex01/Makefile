@@ -1,7 +1,7 @@
 NAME=RPN
 
 CXX=c++
-CXXFLAGS=-Wall -Wextra -Werror -std=c++98 -pedantic-errors
+CXXFLAGS=-Wall -Wextra -Werror -std=c++98 -pedantic-errors -fsanitize=address
 SRCS=main.cpp
 OBJS=$(SRCS:.cpp=.o)
 

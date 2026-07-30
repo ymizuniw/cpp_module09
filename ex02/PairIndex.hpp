@@ -2,6 +2,7 @@
 # define PAIR_INDEX_HPP
 
 # include <deque>
+# include <memory>
 
 struct IdxPair {
     int large;
@@ -9,9 +10,10 @@ struct IdxPair {
     IdxPair(int large_idx, int small_idx);
 };
 
+template<template<typename T, typename Allocator = std::allocator<T> > class Container>
 class PairIndex {
     private:
-        std::deque<IdxPair> pairs_;
+        Container<IdxPair> pairs_;
     public:
         PairIndex();
         PairIndex(const PairIndex &other);
@@ -22,5 +24,7 @@ class PairIndex {
         int getSmallIdxOf(int main_chain_idx) const;
         int getLargeIdxOf(int pend_idx) const;
 };
+
+# include "PairIndex.tpp"
 
 # endif

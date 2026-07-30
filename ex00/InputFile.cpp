@@ -24,6 +24,8 @@ InputFile::~InputFile(){
 
 void InputFile::openFile(){
     file_stream_.open(file_name_.c_str(), std::ios_base::in);
+    if (file_stream_.fail())
+        throw std::runtime_error("Input: Could not open file: " + file_name_);
     file_stream_.exceptions(std::ios_base::badbit);
 }
 
@@ -64,8 +66,6 @@ void InputFile::parseFile(){
         Error err(0, line_num, "");
         Date date = parseDate(tokens[0], err);
         float value = parseValue(tokens[1], err);
-        if (err.err_msg.find("Invalid Value: Not a Positive: line: "))
-            std::cout << "Positive value validation: " << std::endl;
         date.setError(err.err_num, err.line_num, err.err_msg);
         record_.insert(std::make_pair(date, value));
         line_num++;

@@ -1,6 +1,7 @@
 # include "FordJohnson.hpp"
 # include <iostream>
 # include <sstream>
+# include <stdexcept>
 /*
     PROGRAM: PmergeMe
     INPUT:  ./PmergeMe 3 5 9 7 4
@@ -30,14 +31,15 @@ int main(int argc, char *argv[])
         {
             int tmp;
             std::stringstream ss;
-            ss.exceptions(std::ios::failbit | std::ios::badbit);
             ss << argv[i];
             ss >> tmp;
+            if (ss.fail())
+                throw std::invalid_argument("Error: not a valid integer: " + std::string(argv[i]));
             if (tmp<0)
-                throw std::exception();
+                throw std::invalid_argument("Error: negative number not allowed");
             data.push_back(IdxValue(i-1,tmp));
         }
-        FordJohnson<std::deque<IdxValue> > fj(data);
+        FordJohnson<std::deque> fj(data);
         std::deque<IdxValue> sorted_data = fj.sort();
         for (int i=0;i<argc-1;i++)
         {

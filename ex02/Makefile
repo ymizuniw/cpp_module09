@@ -3,7 +3,7 @@ NAME=PmergeMe
 CXX=c++
 CPPFLAGS=-I.
 CXXFLAGS=-Wall -Wextra -Werror -g -std=c++98 -pedantic-errors
-SRCS=main.cpp IdxValue.cpp PairIndex.cpp
+SRCS=main.cpp IdxValue.cpp
 OBJS=$(SRCS:.cpp=.o)
 
 all: $(NAME)

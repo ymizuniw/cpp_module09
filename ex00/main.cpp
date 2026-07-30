@@ -100,7 +100,10 @@ void print_data(std::multimap<Date, float> data)
 int main(int argc, char *argv[])
 {
     if (argc != 2)
+    {
+        std::cout << "Usage: ./btc <input.csv>" << std::endl;
         return (1);
+    }
     
     try {
         DBFile db("data.csv");

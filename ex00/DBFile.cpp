@@ -16,6 +16,8 @@ DBFile::~DBFile(){}
 
 void DBFile::openFile(){
     file_stream_.open(file_name_.c_str(), std::ios_base::in);
+    if (file_stream_.fail())
+        throw std::runtime_error("DB: Could not open file: " + file_name_);
     file_stream_.exceptions(std::ios_base::badbit);
 }
 
