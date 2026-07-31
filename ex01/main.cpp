@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stack>
 #include <string>
+#include <climits>
 
 /*
     RPN: Reverse Polish Notation
@@ -41,14 +42,36 @@ int main(int argc, char* argv[])
             int lh = rpn_stack.top();
             rpn_stack.pop();
             int result;
+
             switch (input[i]) {
             case '+':
-                result = lh + rh;
+                if (lh < INT_MAX - rh)
+                    result = lh + rh;
+                else
+                {
+                    std::cerr << "Overflow: " << std::endl;
+                    return (1);
+                };
                 break;
             case '-':
+                if (lh < 0 && !(lh >= INT_MIN + rh))
+                {
+                    std::cerr << "Underflow: " << std::endl;
+                    return (1);
+                }
                 result = lh - rh;
                 break;
             case '*':
+                if (lh > 0 && rh!=0 && !(lh <= INT_MAX/rh))
+                {
+                    std::cerr << "Overflow: " << std::endl;
+                    return (1);
+                }
+                else if (lh < 0 && rh!=0 &&  !(lh >= INT_MIN/rh))
+                {
+                    std::cerr << "Underflow: " << std::endl;
+                    return (1);
+                }
                 result = lh * rh;
                 break;
             case '/':
