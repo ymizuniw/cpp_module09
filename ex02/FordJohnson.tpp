@@ -2,18 +2,18 @@
 #include <algorithm>
 #include <iterator>
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 FordJohnson<Container>::FordJohnson() : idx_pair_()
 {
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 FordJohnson<Container>::FordJohnson(Container<IdxValue> const& data)
 {
     data_ = data;
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 FordJohnson<Container>::FordJohnson(const FordJohnson& other)
 {
     if (this == &other)
@@ -25,7 +25,7 @@ FordJohnson<Container>::FordJohnson(const FordJohnson& other)
     idx_pair_ = other.idx_pair_;
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 FordJohnson<Container>& FordJohnson<Container>::operator=(const FordJohnson<Container>& other)
 {
     if (this == &other)
@@ -39,13 +39,13 @@ FordJohnson<Container>& FordJohnson<Container>::operator=(const FordJohnson<Cont
     return (*this);
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 FordJohnson<Container>::~FordJohnson()
 {
 }
 
 // In main_chain, search the IdxValue object its idx variable has unique_idx given as an argument.
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
 {
     typename Container<IdxValue>::iterator it = main_chain_.begin();
@@ -61,7 +61,7 @@ IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
 }
 
 // In pend, search the IdxValue object its idx variable has unique_idx given as an argument.
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
 {
     typename Container<IdxValue>::iterator it = pend_.begin();
@@ -76,7 +76,7 @@ IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
     throw std::exception();
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 int FordJohnson<Container>::getPositionOfMainChain(int unique_idx)
 {
     typename Container<IdxValue>::iterator it = main_chain_.begin();
@@ -93,7 +93,7 @@ int FordJohnson<Container>::getPositionOfMainChain(int unique_idx)
     throw std::exception();
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 void FordJohnson<Container>::pairing()
 {
     IdxValue remain;
@@ -142,7 +142,7 @@ void FordJohnson<Container>::pairing()
     }
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 void FordJohnson<Container>::sortPend()
 {
     Container<IdxValue> sorted_pend;
@@ -162,7 +162,7 @@ void FordJohnson<Container>::sortPend()
     pend_ = sorted_pend;
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 int FordJohnson<Container>::getSpaceSize(typename Container<IdxValue>::iterator& pend_it)
 {
     int pos = idx_pair_.getLargeIdxOf((*pend_it).unique_idx);
@@ -171,7 +171,7 @@ int FordJohnson<Container>::getSpaceSize(typename Container<IdxValue>::iterator&
     return (getPositionOfMainChain(pos) + 1);
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 void FordJohnson<Container>::insertByJacobsthal()
 {
     int k = 1;
@@ -212,7 +212,7 @@ void FordJohnson<Container>::insertByJacobsthal()
     }
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 void FordJohnson<Container>::insertion()
 {
     int main_chain_key = main_chain_.front().unique_idx;
@@ -225,7 +225,7 @@ void FordJohnson<Container>::insertion()
     insertByJacobsthal();
 }
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 Container<IdxValue> FordJohnson<Container>::sort()
 {
     if (data_.size() == 1) {

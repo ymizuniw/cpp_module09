@@ -7,7 +7,7 @@
 
 #define REMAINING_ELEM -2
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 class FordJohnson
 {
   private:

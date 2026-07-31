@@ -9,7 +9,7 @@ struct IdxPair {
     IdxPair(int large_idx, int small_idx);
 };
 
-template <template <typename T, typename Allocator = std::allocator<T>> class Container>
+template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 class PairIndex
 {
   private:
