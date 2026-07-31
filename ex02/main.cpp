@@ -39,8 +39,8 @@ int main(int argc, char* argv[])
         deq_time = clock() - deq_time;
 
         std::cout << "After: ";
-        for (std::deque<IdxValue>::iterator it = sorted_deque.begin();
-             it != sorted_deque.end(); ++it)
+        for (std::deque<IdxValue>::iterator it = sorted_deque.begin(); it != sorted_deque.end();
+             ++it)
             std::cout << (*it).value << " ";
         std::cout << std::endl;
 

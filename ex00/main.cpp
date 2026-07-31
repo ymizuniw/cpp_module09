@@ -1,11 +1,11 @@
 #include "DBFile.hpp"
 #include "Date.hpp"
 #include "InputFile.hpp"
+#include "utils.hpp"
 #include <algorithm>
 #include <iostream>
 #include <map>
 #include <string>
-#include "utils.hpp"
 
 // search the exact or lower Date for the value-rate matching
 std::multimap<Date, float> generateDateReference(std::multimap<Date, float> const& db,
@@ -34,8 +34,8 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
         if (input_date < (*db_start).first) {
             input_date.setError(
                 2, input_date.getError().line_num,
-                "Not Found [Date]: line: " + int_to_string(input_date.getError().line_num) +
-                    " : " + input_date.to_string());
+                "Not Found [Date]: line: " + int_to_string(input_date.getError().line_num) + " : " +
+                    input_date.to_string());
             ref_data.insert(std::make_pair(input_date, input_value));
             std::cout << input_date.getError().err_msg << std::endl;
             ++input_it;
