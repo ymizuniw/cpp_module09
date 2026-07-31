@@ -1,10 +1,10 @@
-# ifndef PARSE_DATE_HPP
-# define PARSE_DATE_HPP
+#ifndef PARSE_DATE_HPP
+#define PARSE_DATE_HPP
 
-# include "Error.hpp"
-# include <iostream>
-# include "Date.hpp"
+#include "Date.hpp"
+#include "Error.hpp"
+#include <iostream>
 
-Date parseDate(std::string const &s, Error &err);
+Date parseDate(std::string const& s, Error& err);
 
-# endif
+#endif

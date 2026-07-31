@@ -1,6 +1,6 @@
 #include <iostream>
-#include <string>
 #include <stack>
+#include <string>
 
 /*
     RPN: Reverse Polish Notation
@@ -11,15 +11,15 @@
     LOGIC:
         1. Read the input string from left to right.
         2. If the token is a number, push it onto the stack.
-        3. If the token is an operator, pop the top two numbers from the stack, apply the operator, and push the result back onto the stack.
+        3. If the token is an operator, pop the top two numbers from the stack, apply the operator,
+   and push the result back onto the stack.
         4. Repeat until all tokens are processed.
         5. The final result will be the only number left in the stack.
 */
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    if (argc != 2)
-    {
+    if (argc != 2) {
         std::cerr << "Error: wrong number of arguments" << std::endl;
         return (1);
     }
@@ -28,16 +28,11 @@ int main(int argc, char *argv[])
     size_t i = 0;
 
     std::stack<int> rpn_stack;
-    while (i<input.length())
-    {
-        if (std::isdigit(input[i]))
-        {
-            rpn_stack.push(input[i]-'0');
-        }
-        else if (input[i]=='+' || input[i]=='-' || input[i]=='*' || input[i]=='/')
-        {
-            if (rpn_stack.size()<2)
-            {
+    while (i < input.length()) {
+        if (std::isdigit(input[i])) {
+            rpn_stack.push(input[i] - '0');
+        } else if (input[i] == '+' || input[i] == '-' || input[i] == '*' || input[i] == '/') {
+            if (rpn_stack.size() < 2) {
                 std::cerr << "Error: Not enough operands for operator: " << input[i] << std::endl;
                 return (1);
             }
@@ -46,44 +41,37 @@ int main(int argc, char *argv[])
             int lh = rpn_stack.top();
             rpn_stack.pop();
             int result;
-            switch (input[i])
-            {
-                case '+':
-                    result = lh + rh;
-                    break;
-                case '-':
-                    result = lh - rh;
-                    break;
-                case '*':
-                    result = lh * rh;
-                    break;
-                case '/':
-                    if (rh == 0)
-                    {
-                        std::cerr << "Error: Division by zero" << std::endl;
-                        return (1);
-                    }
-                    result = lh / rh;
-                    break;
+            switch (input[i]) {
+            case '+':
+                result = lh + rh;
+                break;
+            case '-':
+                result = lh - rh;
+                break;
+            case '*':
+                result = lh * rh;
+                break;
+            case '/':
+                if (rh == 0) {
+                    std::cerr << "Error: Division by zero" << std::endl;
+                    return (1);
+                }
+                result = lh / rh;
+                break;
             }
             rpn_stack.push(result);
-        }
-        else if (input[i]==' ')
-        {
+        } else if (input[i] == ' ') {
             // ignore space
-        }
-        else
-        {
+        } else {
             std::cerr << "Invalid character: " << input[i] << std::endl;
             return (1);
         }
         ++i;
     }
-    if (rpn_stack.size() != 1)
-    {
+    if (rpn_stack.size() != 1) {
         std::cerr << "Error: Invalid expression" << std::endl;
         return (1);
     }
     std::cout << rpn_stack.top() << std::endl;
-    return(0);
+    return (0);
 }

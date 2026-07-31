@@ -1,10 +1,9 @@
-# ifndef ERROR_HPP
-# define ERROR_HPP
+#ifndef ERROR_HPP
+#define ERROR_HPP
 
-# include <string>
+#include <string>
 
-struct Error
-{
+struct Error {
     int err_num;
     int line_num;
     std::string err_msg;
@@ -13,4 +12,4 @@ struct Error
     void setError(int err_num, int line_num, std::string err_msg);
 };
 
-# endif
+#endif

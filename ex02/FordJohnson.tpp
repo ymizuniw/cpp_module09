@@ -1,4 +1,5 @@
-# include "FordJohnson.hpp"
+#include "FordJohnson.hpp"
+#include <algorithm>
 
 template<template<typename T, typename Allocator = std::allocator<T> > class Container>
 FordJohnson<Container>::FordJohnson(): idx_pair_() {}

@@ -1,12 +1,12 @@
-# include "IdxValue.hpp"
+#include "IdxValue.hpp"
 
-IdxValue::IdxValue(): unique_idx(-1), value(-1){}
+IdxValue::IdxValue() : unique_idx(-1), value(-1) {}
 
-IdxValue::IdxValue(int unique_idx, int value): unique_idx(unique_idx), value(value){}
+IdxValue::IdxValue(int unique_idx, int value) : unique_idx(unique_idx), value(value) {}
 
-bool IdxValue::operator<(const IdxValue &other) const
+bool IdxValue::operator<(const IdxValue& other) const
 {
-    if (this->value<other.value)
+    if (this->value < other.value)
         return (true);
     return (false);
 }

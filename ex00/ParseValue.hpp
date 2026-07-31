@@ -1,10 +1,9 @@
-# ifndef PARSE_VALUE_HPP
-# define PARSE_VALUE_HPP
+#ifndef PARSE_VALUE_HPP
+#define PARSE_VALUE_HPP
 
-# include <string>
-# include <sstream>
-# include "Error.hpp"
+#include "Error.hpp"
+#include <string>
 
-float parseValue(std::string const &val, Error &err);
+float parseValue(std::string const& val, Error& err);
 
-# endif
+#endif
