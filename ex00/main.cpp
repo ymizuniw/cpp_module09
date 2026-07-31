@@ -13,11 +13,11 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
 {
     std::multimap<Date, float> ref_data;
 
-    std::multimap<Date, float>::iterator db_start = db.begin();
-    std::multimap<Date, float>::iterator db_end = db.end();
-    std::multimap<Date, float>::iterator input_it = input.begin();
-    std::multimap<Date, float>::iterator input_end = input.end();
-    std::multimap<Date, float>::iterator target_it;
+    std::multimap<Date, float>::const_iterator db_start = db.begin();
+    std::multimap<Date, float>::const_iterator db_end = db.end();
+    std::multimap<Date, float>::const_iterator input_it = input.begin();
+    std::multimap<Date, float>::const_iterator input_end = input.end();
+    std::multimap<Date, float>::const_iterator target_it;
 
     while (input_it != input_end) {
         Date input_date = (*input_it).first;
