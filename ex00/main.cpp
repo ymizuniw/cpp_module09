@@ -81,24 +81,24 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
     return (ref_data);
 }
 
-// error handling based on the error status of each nodes are needed.
-void print_data(std::multimap<Date, float> data)
-{
-    std::multimap<Date,float>::const_iterator it = data.cbegin();
-    std::multimap<Date,float>::const_iterator end_it = data.cend();
+// // error handling based on the error status of each nodes are needed.
+// void print_data(std::multimap<Date, float> data)
+// {
+//     std::multimap<Date,float>::const_iterator it = data.cbegin();
+//     std::multimap<Date,float>::const_iterator end_it = data.cend();
 
-    while (it!=end_it)
-    {
-        if ((*it).first.getError().err_num!=0)
-        {
-            std::cout << (*it).first.getError().err_msg << std::endl;
-            ++it;
-            continue;
-        }
-        std::cout << (*it).first.to_string() + " => " + std::to_string((*it).second) << std::endl;
-        ++it;
-    }
-}
+//     while (it!=end_it)
+//     {
+//         if ((*it).first.getError().err_num!=0)
+//         {
+//             std::cout << (*it).first.getError().err_msg << std::endl;
+//             ++it;
+//             continue;
+//         }
+//         std::cout << (*it).first.to_string() + " => " + std::to_string((*it).second) << std::endl;
+//         ++it;
+//     }
+// }
 
 int main(int argc, char *argv[])
 {
