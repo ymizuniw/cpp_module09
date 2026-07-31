@@ -3,7 +3,7 @@ NAME=btc
 CXX=c++
 CPPFLAGS=-I.
 CXXFLAGS=-Wall -Wextra -Werror -std=c++98 -pedantic-errors
-SRCS=main.cpp CSVParser.cpp Date.cpp DBFile.cpp Error.cpp InputFile.cpp ParseDate.cpp ParseValue.cpp 
+SRCS=main.cpp CSVParser.cpp Date.cpp DBFile.cpp Error.cpp InputFile.cpp ParseDate.cpp ParseValue.cpp to_string.cpp
 OBJS=$(SRCS:.cpp=.o)
 
 all: $(NAME)

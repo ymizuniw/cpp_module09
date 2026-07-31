@@ -5,26 +5,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-
-/*
-    multimapを使用する
-*/
-// date validation
-/*
-    1. the length : 2000-01-01 = 10
-    2. check [four digits] [-] [two digits] [-] [two digits]
-    3. get yyyy[four digits] (skip++) mm[two digits] (skip++) dd[two digits]
-    4. check the range of year, mon, and day.
-*/
-
-/*
-    ・データベースの検証は、フォーマットエラーが発見されたタイミングで例外を投げる処理でよく、
-    状態を返す必要はない。ユーザ定義ではなく内部エラーとみなすからである。
-    ・入力ファイルの検証は、1.フォーマットエラー 2.値エラー （date_format > date_value >
-   value_format > value_value）の優先度で処理する。
-    ・つまり、これは単なるバリデーションではなくノードごとの状態を持つ構造体を作成する関数である必要がある。
-    ・保有量とレートを掛け算して値を算出する必要があるため、日付は文字列で良いが、値はfloatで保存する必要がある。
-*/
+#include "utils.hpp"
 
 // search the exact or lower Date for the value-rate matching
 std::multimap<Date, float> generateDateReference(std::multimap<Date, float> const& db,
@@ -53,7 +34,7 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
         if (input_date < (*db_start).first) {
             input_date.setError(
                 2, input_date.getError().line_num,
-                "Not Found [Date]: line: " + std::to_string(input_date.getError().line_num) +
+                "Not Found [Date]: line: " + int_to_string(input_date.getError().line_num) +
                     " : " + input_date.to_string());
             ref_data.insert(std::make_pair(input_date, input_value));
             std::cout << input_date.getError().err_msg << std::endl;
@@ -74,8 +55,8 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
         if (input_date.getError().err_num == 0)
             new_val = target_value * input_value;
         ref_data.insert(std::make_pair(input_date, new_val));
-        std::cout << input_date.to_string() + " => " + std::to_string(input_value) + " => " +
-                         std::to_string(new_val)
+        std::cout << input_date.to_string() + " => " + float_to_string(input_value) + " => " +
+                         float_to_string(new_val)
                   << std::endl;
         ++input_it;
     }

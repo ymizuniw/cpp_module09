@@ -1,5 +1,6 @@
 
 #include "Date.hpp"
+#include "utils.hpp"
 
 Date::Date() : err_() {}
 Date::Date(int day, int month, int year, Error& err)
@@ -55,5 +56,5 @@ void Date::setError(int err_num, int line_num, std::string err_msg)
 
 std::string Date::to_string() const
 {
-    return (std::to_string(year_) + "-" + std::to_string(month_) + "-" + std::to_string(day_));
+    return (int_to_string(year_) + "-" + int_to_string(month_) + "-" + int_to_string(day_));
 }

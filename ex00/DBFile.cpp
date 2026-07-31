@@ -2,6 +2,7 @@
 #include "Error.hpp"
 #include "ParseDate.hpp"
 #include "ParseValue.hpp"
+#include "utils.hpp"
 
 DBFile::DBFile() : CSVParser() {}
 DBFile::DBFile(std::string file_name) : CSVParser(file_name, ',', "date,exchange_rate") {}
@@ -41,7 +42,7 @@ void DBFile::parseFile()
     while (std::getline(file_stream_, line)) {
         std::vector<std::string> tokens = splitLine(line);
         if (tokens.size() != 2)
-            throw std::runtime_error("DB: Invalid line format: " + std::to_string(line_num));
+            throw std::runtime_error("DB: Invalid line format: " + int_to_string(line_num));
 
         Error err(0, line_num, "");
         Date date = parseDate(tokens[0], err);
