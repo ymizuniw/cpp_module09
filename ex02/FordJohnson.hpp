@@ -23,7 +23,7 @@ class FordJohnson
     void sortPend();
     void insertion();
     void insertByJacobsthal();
-    int getSpaceSize(typename Container<IdxValue>::const_iterator& pend_it);
+    int getSpaceSize(typename Container<IdxValue>::iterator& pend_it);
 
   public:
     FordJohnson();

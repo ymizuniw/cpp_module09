@@ -51,10 +51,10 @@ int  PairIndex<Container>::getSmallIdxOf(int large_idx) const
 
 // this will get the place of the main_chain element that is target place for pend element to insert.
 template<template<typename T, typename Allocator = std::allocator<T> > class Container>
-int  PairIndex<Container>::getLargeIdxOf(int pend_idx) const
+int  PairIndex<Container>::getLargeIdxOf(int pend_idx)
 {
-    typename Container<IdxPair>::const_iterator it = pairs_.begin();
-    typename Container<IdxPair>::const_iterator end_it = pairs_.end();
+    typename Container<IdxPair>::iterator it = pairs_.begin();
+    typename Container<IdxPair>::iterator end_it = pairs_.end();
 
     while (it!=end_it)
     {

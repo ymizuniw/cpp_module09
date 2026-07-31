@@ -44,8 +44,8 @@ FordJohnson<Container>::~FordJohnson() {}
 template<template<typename T, typename Allocator = std::allocator<T> > class Container>
 IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
 {
-    typename Container<IdxValue>::const_iterator it = main_chain_.begin();
-    typename Container<IdxValue>::const_iterator end_it = main_chain_.end();
+    typename Container<IdxValue>::iterator it = main_chain_.begin();
+    typename Container<IdxValue>::iterator end_it = main_chain_.end();
 
     while (it!=end_it)
     {
@@ -62,8 +62,8 @@ IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
 template<template<typename T, typename Allocator = std::allocator<T> > class Container>
 IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
 {
-    typename Container<IdxValue>::const_iterator it = pend_.begin();
-    typename Container<IdxValue>::const_iterator end_it = pend_.end();
+    typename Container<IdxValue>::iterator it = pend_.begin();
+    typename Container<IdxValue>::iterator end_it = pend_.end();
 
     while (it!=end_it)
     {
@@ -79,8 +79,8 @@ IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
 template<template<typename T, typename Allocator = std::allocator<T> > class Container>
 int      FordJohnson<Container>::getPositionOfMainChain(int unique_idx)
 {
-    typename Container<IdxValue>::const_iterator it = main_chain_.begin();
-    typename Container<IdxValue>::const_iterator end_it = main_chain_.end();
+    typename Container<IdxValue>::iterator it = main_chain_.begin();
+    typename Container<IdxValue>::iterator end_it = main_chain_.end();
 
     size_t pos = 0;
     while (it!=end_it)
@@ -104,14 +104,14 @@ void FordJohnson<Container>::pairing()
     if (data_.size()%2!=0)
     {
         remain = data_.back();
-        typename Container<IdxValue>::const_iterator prev_end = data_.end();
+        typename Container<IdxValue>::iterator prev_end = data_.end();
         --prev_end;
         data_.erase(prev_end);
         odd = true;
     }
 
-    typename Container<IdxValue>::const_iterator it = data_.begin();
-    typename Container<IdxValue>::const_iterator end_it = data_.end();
+    typename Container<IdxValue>::iterator it = data_.begin();
+    typename Container<IdxValue>::iterator end_it = data_.end();
 
     while (it!=end_it)
     {
@@ -120,7 +120,7 @@ void FordJohnson<Container>::pairing()
         int large_idx = -1;
         int small_idx = -1;
 
-        typename Container<IdxValue>::const_iterator next_it = it;
+        typename Container<IdxValue>::iterator next_it = it;
         ++next_it;
         if ((*it)<(*next_it))
         {
@@ -155,8 +155,8 @@ void FordJohnson<Container>::sortPend()
 {
     Container<IdxValue> sorted_pend;
 
-    typename Container<IdxValue>::const_iterator it = main_chain_.begin();
-    typename Container<IdxValue>::const_iterator end_it = main_chain_.end();
+    typename Container<IdxValue>::iterator it = main_chain_.begin();
+    typename Container<IdxValue>::iterator end_it = main_chain_.end();
    int pend_unique_idx;
 
    while (it!=end_it)
@@ -173,7 +173,7 @@ void FordJohnson<Container>::sortPend()
 }
 
 template<template<typename T, typename Allocator = std::allocator<T> > class Container>
-int FordJohnson<Container>::getSpaceSize(typename Container<IdxValue>::const_iterator &pend_it)
+int FordJohnson<Container>::getSpaceSize(typename Container<IdxValue>::iterator &pend_it)
 {
     int pos = idx_pair_.getLargeIdxOf((*pend_it).unique_idx);
     if (pos==REMAINING_ELEM)
@@ -185,11 +185,11 @@ template<template<typename T, typename Allocator = std::allocator<T> > class Con
 void FordJohnson<Container>::insertByJacobsthal()
 {
     int k = 1;
-    typename Container<IdxValue>::const_iterator pend_it = std::next(pend_.begin());
-    typename Container<IdxValue>::const_iterator pend_end_it = pend_.end();
+    typename Container<IdxValue>::iterator pend_it = ++pend_.begin();
+    typename Container<IdxValue>::iterator pend_end_it = pend_.end();
 
-    typename Container<IdxValue>::const_iterator start_it;
-    typename Container<IdxValue>::const_iterator end_it;
+    typename Container<IdxValue>::iterator start_it;
+    typename Container<IdxValue>::iterator end_it;
 
     while (pend_it!=pend_end_it)
     {

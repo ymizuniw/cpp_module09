@@ -29,7 +29,7 @@ int main(int argc, char* argv[])
         }
 
         std::cout << "Before: ";
-        for (std::deque<IdxValue>::const_iterator it = deq_data.begin(); it != deq_data.end(); ++it)
+        for (std::deque<IdxValue>::iterator it = deq_data.begin(); it != deq_data.end(); ++it)
             std::cout << (*it).value << " ";
         std::cout << std::endl;
 
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
         deq_time = clock() - deq_time;
 
         std::cout << "After: ";
-        for (std::deque<IdxValue>::const_iterator it = sorted_deque.begin();
+        for (std::deque<IdxValue>::iterator it = sorted_deque.begin();
              it != sorted_deque.end(); ++it)
             std::cout << (*it).value << " ";
         std::cout << std::endl;

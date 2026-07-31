@@ -23,7 +23,7 @@ class PairIndex
 
     void add(int main_chain_idx, int pend_idx);
     int getSmallIdxOf(int main_chain_idx) const;
-    int getLargeIdxOf(int pend_idx) const;
+    int getLargeIdxOf(int pend_idx);
 };
 
 #include "PairIndex.tpp"
