@@ -47,6 +47,7 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
         if (input_date.getError().err_num!=0)
         {
             ref_data.insert(std::make_pair(input_date, input_value));
+            std::cout << input_date.getError().err_msg << std::endl;
             ++input_it;
             continue;
         }
@@ -55,6 +56,7 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
         {
             input_date.setError(2, input_date.getError().line_num, "Not Found [Date]: line: " + std::to_string(input_date.getError().line_num) + " : " + input_date.to_string());
             ref_data.insert(std::make_pair(input_date, input_value));
+            std::cout << input_date.getError().err_msg << std::endl;
             ++input_it;
             continue;
         }
@@ -73,6 +75,7 @@ std::multimap<Date, float> generateDateReference(std::multimap<Date, float> cons
         if (input_date.getError().err_num==0)
             new_val = target_value * input_value;
         ref_data.insert(std::make_pair(input_date, new_val));
+        std::cout << input_date.to_string() + " => " + std::to_string(input_value) + " => " + std::to_string(new_val) << std::endl;
         ++input_it;
     }
     return (ref_data);
@@ -117,7 +120,7 @@ int main(int argc, char *argv[])
         input.parseFile();
 
         std::multimap<Date, float> ref = generateDateReference(db.getRecord(), input.getRecord());
-        print_data(ref);
+        // print_data(ref);
     } catch(std::exception &e){
         std::cout << e.what() << std::endl;
         return (1);
