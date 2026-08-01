@@ -45,18 +45,40 @@ int main(int argc, char* argv[])
 
             switch (input[i]) {
             case '+':
-                if (!(lh <= INT_MAX - rh))
+                if (lh>0 && rh>0)
                 {
-                    std::cerr << "Overflow: " << std::endl;
-                    return (1);
-                };
+                    if (!(lh <= INT_MAX - rh))
+                    {
+                        std::cerr << "Overflow: " << std::endl;
+                        return (1);
+                    };
+                }
+                else if (lh<0 && rh<0)
+                {
+                    if (!(lh >= INT_MIN - rh))
+                    {
+                        std::cerr << "Underflow: " << std::endl;
+                        return (1);
+                    };
+                }
                 result = lh + rh;
                 break;
             case '-':
-                if (lh < 0 && !(lh >= INT_MIN + rh))
+                if (lh >= 0 && rh < 0)
                 {
-                    std::cerr << "Underflow: " << std::endl;
-                    return (1);
+                    if (!(lh >= INT_MAX + rh))
+                    {
+                        std::cerr << "Overflow: " << std::endl;
+                        return (1);
+                    }
+                }
+                else if (lh<=0 && rh > 0)
+                {
+                    if (!(lh >= INT_MIN + rh))
+                    {
+                        std::cerr << "Underflow: " << std::endl;
+                        return (1);
+                    }
                 }
                 result = lh - rh;
                 break;
