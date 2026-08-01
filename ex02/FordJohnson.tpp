@@ -44,7 +44,7 @@ FordJohnson<Container>::~FordJohnson()
 {
 }
 
-// In main_chain, search the IdxValue object its idx variable has unique_idx given as an argument.
+// get IdxValue from main_chain_ identified by unique_idx.
 template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
 {
@@ -60,7 +60,7 @@ IdxValue FordJohnson<Container>::getIdxValueOfMainChain(int unique_idx)
     throw std::exception();
 }
 
-// In pend, search the IdxValue object its idx variable has unique_idx given as an argument.
+// get IdxValue from pend_ identified by unique_idx.
 template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
 {
@@ -76,6 +76,7 @@ IdxValue FordJohnson<Container>::getIdxValueOfPend(int unique_idx)
     throw std::exception();
 }
 
+// get the place of the element in MainChain container. 
 template <template <typename T, typename Allocator = std::allocator<T> > class Container>
 int FordJohnson<Container>::getPositionOfMainChain(int unique_idx)
 {

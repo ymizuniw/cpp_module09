@@ -2,6 +2,7 @@
 #include "Error.hpp"
 #include "ParseDate.hpp"
 #include "ParseValue.hpp"
+#include <iostream>
 
 InputFile::InputFile() : CSVParser() {}
 

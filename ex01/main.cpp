@@ -45,13 +45,12 @@ int main(int argc, char* argv[])
 
             switch (input[i]) {
             case '+':
-                if (lh < INT_MAX - rh)
-                    result = lh + rh;
-                else
+                if (!(lh <= INT_MAX - rh))
                 {
                     std::cerr << "Overflow: " << std::endl;
                     return (1);
                 };
+                result = lh + rh;
                 break;
             case '-':
                 if (lh < 0 && !(lh >= INT_MIN + rh))

@@ -3,7 +3,6 @@
 
 #include "Date.hpp"
 #include "Error.hpp"
-#include <iostream>
 
 Date parseDate(std::string const& s, Error& err);
 
